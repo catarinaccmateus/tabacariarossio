@@ -5,32 +5,25 @@ const router = new Router();
 const User = require('./../models/user');
 const bcryptjs = require('bcryptjs');
 
-router.get('/sign-up', (req, res, next) => {
-  res.render('sign-up');
-});
-
 router.post('/sign-up', (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { name, username, email, password } = req.body;
   bcryptjs
     .hash(password, 10)
     .then(hash => {
       return User.create({
         name,
+        username,
         email,
         passwordHash: hash
       });
     })
     .then(user => {
       req.session.user = user._id;
-      res.redirect('/private');
+      res.json({ user });
     })
     .catch(error => {
       next(error);
     });
-});
-
-router.get('/sign-in', (req, res, next) => {
-  res.render('sign-in');
 });
 
 router.post('/sign-in', (req, res, next) => {
@@ -61,6 +54,22 @@ router.post('/sign-in', (req, res, next) => {
 router.post('/sign-out', (req, res, next) => {
   req.session.destroy();
   res.redirect('/');
+});
+
+router.get("/user-information", async (req, res, next) => {
+  const userId = req.session.user;
+  //console.log('I am in the server, the user id is', req.session.user);
+  if (!userId) {
+    res.json({});
+  } else {
+    try {
+      const user = await User.findById(userId);
+      if (!user) throw new Error('Signed in user not found');
+      res.json({ user });
+    } catch (error) {
+      next(error);
+    }
+  }
 });
 
 module.exports = router;

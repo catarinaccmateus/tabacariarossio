@@ -1,0 +1,30 @@
+AUTHENTICATION
+
+- Email confirmation prior registration
+- Password recovery
+- Edit/Add address
+
+
+USER
+
+- Check previous orders
+- Save Favorites
+- Send email when product on stock
+- Possible chat?
+- Order Basket
+- Payment: credit card/ bank transfer/ multibanco
+- Receive email when order completed with all details
+- Receive email with invoice
+
+
+STORE 
+
+Admin & Employee
+- Add products
+- Display Products
+- Receive an email with orders
+- Manage orders (pending, sent, invoice sent, completed)
+
+Admin
+- Add/Remove employee users or change their password.
+

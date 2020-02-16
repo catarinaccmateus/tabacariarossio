@@ -14,6 +14,8 @@ const basicAuthenticationDeserializer = require('./middleware/basic-authenticati
 const bindUserToViewLocals = require('./middleware/bind-user-to-view-locals.js');
 const indexRouter = require('./routes/index');
 const authenticationRouter = require('./routes/authentication');
+const productsRouter = require('./routes/products');
+
 
 const app = express();
 
@@ -30,7 +32,10 @@ app.use(sassMiddleware({
         }));
 app.use(express.static(join(__dirname, 'public')));
 app.use(logger('dev'));
-app.use(express.urlencoded({ extended: true }));
+
+//app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 app.use(cookieParser());
 app.use(
   expressSession({
@@ -53,6 +58,8 @@ app.use(bindUserToViewLocals);
 
 app.use('/', indexRouter);
 app.use('/api/authentication', authenticationRouter);
+app.use('/api/products', productsRouter);
+
 
 // Catch missing routes and forward to error handler
 app.use((req, res, next) => {
