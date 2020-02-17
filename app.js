@@ -56,9 +56,10 @@ app.use(
 app.use(basicAuthenticationDeserializer);
 app.use(bindUserToViewLocals);
 
-app.use('/', indexRouter);
 app.use('/api/authentication', authenticationRouter);
 app.use('/api/products', productsRouter);
+app.use('/', indexRouter);
+
 
 
 // Catch missing routes and forward to error handler

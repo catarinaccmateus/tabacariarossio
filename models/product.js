@@ -10,12 +10,12 @@ const schema = new mongoose.Schema({
   model: String,
   brand: String,
   price: Number,
-  barcode: String,
-  internalcodel: String,
+  barCode: String,
+  internalCode: String,
   description: String,
   image: {
     type: String,
-    default: "https://www.google.pt/url?sa=i&url=https%3A%2F%2Fwww.imore.com%2Fhow-set-default-weather-stock-world-clock-apple-watch&psig=AOvVaw3-L8obzFa1iGBOnWFRBLtt&ust=1581925554247000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCODnhIzK1ecCFQAAAAAdAAAAABAD"
+    default: "https://www.imore.com/sites/imore.com/files/styles/larger_wm_brw/public/field/image/2015/04/apple-watch-world-clock-hero.jpg?itok=AkNT8iYB"
   },
   creationDate: { type: Date, default: Date.now }
 });
