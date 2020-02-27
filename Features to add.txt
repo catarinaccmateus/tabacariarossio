@@ -7,6 +7,7 @@ AUTHENTICATION
 
 USER
 
+- Search products on search-bar
 - Check previous orders
 - Save Favorites
 - Send email when product on stock
@@ -20,8 +21,8 @@ USER
 STORE 
 
 Admin & Employee
-- Add products
-- Display Products
+- Add products - done
+- Display Products - done
 - Receive an email with orders
 - Manage orders (pending, sent, invoice sent, completed)
 

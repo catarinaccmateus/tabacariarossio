@@ -56,13 +56,14 @@ router.get("/info/:id", async (req, res, next) => {
   }
 });
 
-router.get("/delete/:id", async (req, res, next) => {
+router.post("/delete/:id", async (req, res, next) => {
   const productId = req.params.id;
   if (!productId) {
     res.json({});
   } else {
     try {
       await Product.findByIdAndDelete(productId);
+      res.json({});
     } catch (error) {
       next(error);
     }
