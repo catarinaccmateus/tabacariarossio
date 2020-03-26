@@ -8,6 +8,7 @@ AUTHENTICATION
 USER
 
 - Search products on search-bar
+- Only show products available
 - Check previous orders
 - Save Favorites
 - Send email when product on stock
@@ -16,6 +17,8 @@ USER
 - Payment: credit card/ bank transfer/ multibanco
 - Receive email when order completed with all details
 - Receive email with invoice
+- Add pop up sign-in/sign-up
+- Add pop up "item added to basket"
 
 
 STORE 

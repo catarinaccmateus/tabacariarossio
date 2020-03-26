@@ -12,16 +12,18 @@ router.post("/create", (req, res, next) => {
     price,
     barCode,
     internalCode,
-    description
+    description,
+    available_quantity
   } = req.body;
   Product.create({
     type,
     model,
     brand,
-    price,
+    price: price*100,
     barCode,
     internalCode,
-    description
+    description,
+    available_quantity
   })
     .then(product => {
       res.json({ product });
@@ -49,7 +51,7 @@ router.get("/info/:id", async (req, res, next) => {
     try {
       const product = await Product.findById(productId);
       if (!product) throw new Error("Product not found");
-      res.json({product });
+      res.json({product});
     } catch (error) {
       next(error);
     }

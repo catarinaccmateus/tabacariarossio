@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
   name: {
@@ -21,13 +21,30 @@ const schema = new mongoose.Schema({
   passwordHash: {
     type: String
   },
+  phoneNumber: {
+    type: Number
+  },
+  taxNumber: {
+    type: Number
+  },
   address: {
     line1: String,
     line2: String,
     zipcode: String,
     city: String,
     country: {
-      type: String
+      type: String,
+      default: "Portugal"
+    }
+  },
+  taxAddress: {
+    line1: String,
+    line2: String,
+    zipcode: String,
+    city: String,
+    country: {
+      type: String,
+      default: "Portugal"
     }
   },
   role: {
@@ -35,8 +52,7 @@ const schema = new mongoose.Schema({
     enum: ["user", "admin", "employee"],
     default: "user"
   },
-  creationDate : { type : Date, default: Date.now }
-},
-);
+  creationDate: { type: Date, default: Date.now }
+});
 
-module.exports = mongoose.model('User', schema);
+module.exports = mongoose.model("User", schema);
