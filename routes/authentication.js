@@ -26,6 +26,26 @@ router.post('/sign-up', (req, res, next) => {
     });
 });
 
+router.post('/edit-user', (req, res, next) => {
+  const { name, surname, email, phoneNumber, taxNumber, address, taxAddress } = req.body;
+  const userId = req.session.user;
+   User.findByIdAndUpdate(userId, {
+        name,
+        surname,
+        email,
+        phoneNumber,
+        taxNumber,
+        address,
+        taxAddress
+      })
+    .then(user => {
+      res.json({ user });
+    })
+    .catch(error => {
+      next(error);
+    });
+});
+
 router.post('/sign-in', (req, res, next) => {
   let userId;
   const { email, password } = req.body;
