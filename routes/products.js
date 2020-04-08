@@ -3,8 +3,12 @@
 const { Router } = require("express");
 const router = new Router();
 const Product = require("./../models/product");
+const Image = require("./../models/image");
+const uploader = require("./../middleware/multer-configuration");
 
-router.post("/create", (req, res, next) => {
+
+router.post("/create",  uploader.array('image', 5), async (req, res, next) => {
+
   const {
     type,
     model,
@@ -15,10 +19,17 @@ router.post("/create", (req, res, next) => {
     description,
     available_quantity
   } = req.body;
+
+  let imageUrls = [];
+  for (let i = 0; i < req.files.length; i++) {
+    imageUrls.push(req.files[i].url);
+  }
+
   Product.create({
     type,
     model,
     brand,
+    image: imageUrls,
     price: price*100,
     barCode,
     internalCode,
@@ -29,12 +40,12 @@ router.post("/create", (req, res, next) => {
       res.json({ product });
     })
     .catch(error => {
+      console.log('not possible to create due to', error);
       next(error);
     });
 });
 
 router.get("/display-all", async (req, res, next) => {
-  console.log('in backend');
     try {
       const product = await Product.find();
       res.json({product });
