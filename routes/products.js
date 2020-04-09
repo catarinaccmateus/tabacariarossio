@@ -3,7 +3,6 @@
 const { Router } = require("express");
 const router = new Router();
 const Product = require("./../models/product");
-const Image = require("./../models/image");
 const uploader = require("./../middleware/multer-configuration");
 
 
