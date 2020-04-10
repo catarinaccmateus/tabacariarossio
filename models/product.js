@@ -24,8 +24,9 @@ const schema = new mongoose.Schema({
   order_quantity: {
     type: Number,
     default: 1
-  },
-  creationDate: { type: Date, default: Date.now }
+  }, 
+  creationDate: { type: Date, default: Date.now },
+  lastUpdate: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model("Product", schema);

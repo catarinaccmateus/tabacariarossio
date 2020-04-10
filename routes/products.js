@@ -82,4 +82,37 @@ router.post("/delete/:id", async (req, res, next) => {
   }
 });
 
+router.post("/edit/:id", async (req, res, next) => {
+  const productId = req.params.id;
+  const {
+    type,
+    model,
+    brand,
+    price,
+    barCode,
+    internalCode,
+    description,
+    available_quantity
+  } = req.body;
+  Product.findByIdAndUpdate({productId},{
+    type,
+    model,
+    brand,
+    price,
+    barCode,
+    internalCode,
+    description,
+    available_quantity,
+    lastUpdate: Date.now
+  })
+  .then(product => {
+      res.json({ product });
+    })
+    .catch(error => {
+      console.log('not possible to update due to', error);
+      next(error);
+    });
+ 
+});
+
 module.exports = router;
