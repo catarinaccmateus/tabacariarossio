@@ -24,6 +24,10 @@ router.post("/create",  uploader.array('image', 5), async (req, res, next) => {
     imageUrls.push(req.files[i].url);
   }
 
+  if(imageUrls.length === 0) {
+    imageUrls = ['https://res.cloudinary.com/dgmvfq29c/image/upload/v1586793875/Tabacaria-Rossio-Images-Uploads/default_image_mxkvcj.png'];
+  }
+
   Product.create({
     type,
     model,
@@ -98,7 +102,7 @@ router.post("/edit/:id", async (req, res, next) => {
   Product.findByIdAndUpdate(productId,{
     model,
     brand,
-    price,
+    price: price*100,
     barCode,
     internalCode,
     description,

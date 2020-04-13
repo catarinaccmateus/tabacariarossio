@@ -6,6 +6,7 @@ const User = require('./../models/user');
 const bcryptjs = require('bcryptjs');
 
 router.post('/sign-up', (req, res, next) => {
+  console.log('in sign up', req.body);
   const { name, username, email, password } = req.body;
   bcryptjs
     .hash(password, 10)
@@ -18,10 +19,15 @@ router.post('/sign-up', (req, res, next) => {
       });
     })
     .then(user => {
+      console.log('user logged in');
       req.session.user = user._id;
       res.json({ user });
     })
     .catch(error => {
+      if (error.code === 11000) {
+        res.json({ error: 'Duplicated email' });
+      }
+      console.log('error!', error);
       next(error);
     });
 });
