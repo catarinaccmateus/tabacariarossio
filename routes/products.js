@@ -83,9 +83,10 @@ router.post("/delete/:id", async (req, res, next) => {
 });
 
 router.post("/edit/:id", async (req, res, next) => {
+
   const productId = req.params.id;
+
   const {
-    type,
     model,
     brand,
     price,
@@ -94,8 +95,7 @@ router.post("/edit/:id", async (req, res, next) => {
     description,
     available_quantity
   } = req.body;
-  Product.findByIdAndUpdate({productId},{
-    type,
+  Product.findByIdAndUpdate(productId,{
     model,
     brand,
     price,
@@ -103,7 +103,7 @@ router.post("/edit/:id", async (req, res, next) => {
     internalCode,
     description,
     available_quantity,
-    lastUpdate: Date.now
+    lastUpdate: new Date()
   })
   .then(product => {
       res.json({ product });
