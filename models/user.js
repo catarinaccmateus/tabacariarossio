@@ -21,6 +21,8 @@ const schema = new mongoose.Schema({
   passwordHash: {
     type: String
   },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
   phoneNumber: {
     type: Number
   },
