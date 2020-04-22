@@ -116,15 +116,13 @@ router.post("/password-recovery", (req, res, next) => {
       if (user === null) {
         console.log("user is null", user);
         // res.status(404).render();
-        return res.status(403).json( "No user with this email in DB." );
-    
+        return res.status(403).json("No user with this email in DB.");
       } else {
         const token = crypto.randomBytes(20).toString("hex");
 
-        User.update({
-          resetPasswordToken: token,
-          resetPasswordExpires: Date.now() + 3600000,
-        });
+        user.resetPasswordExpires = Date.now() + 3600000;
+        user.resetPasswordToken = token;
+        user.save();
 
         const transporter = nodemailer.createTransport({
           service: "gmail",
@@ -159,6 +157,53 @@ router.post("/password-recovery", (req, res, next) => {
     })
     .catch((error) => {
       console.log("this is the error", error);
+    });
+});
+
+router.post("/reset", (req, res, next) => {
+  User.findOne({
+    resetPasswordToken: req.body.params,
+    resetPasswordExpires: {
+      $gt: Date.now(),
+    },
+  })
+    .then((user) => {
+      if (user === null) {
+        res.json("Password reset link is invalid or has expired");
+      } else {
+        res.status(200).send({
+          email: user.email,
+          message: "Password Reset Link ok",
+        });
+      }
+    })
+    .catch((error) => {
+      console.log("Couldnt find user due to", error);
+    });
+});
+
+router.post("/updatePasswordViaEmail", (req, res, next) => {
+  console.log("in backend, my req body", req.body);
+  const { email, password, resetPasswordToken } = req.body;
+
+  User.findOne({ email: email, resetPasswordToken: resetPasswordToken })
+    .then((user) => {
+      if (user !== null) {
+        console.log("user is no null", user);
+        bcryptjs.hash(password, 10).then((hash) => {
+          user.password = hash;
+          user.resetPasswordToken = null;
+          user.resetPasswordExpires = null;
+          user.save();
+          res.status(200).send({ message: "Password updated" });
+        });
+      } else {
+        console.log("the user is null, not found", user);
+        res.status(404).json("No user exist in DB to update");
+      }
+    })
+    .catch((err) => {
+      console.log("there was an error", err);
     });
 });
 

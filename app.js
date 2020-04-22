@@ -29,7 +29,7 @@ app.use(
     outputStyle:
       process.env.NODE_ENV === "development" ? "nested" : "compressed",
     force: process.env.NODE_ENV === "development",
-    sourceMap: true
+    sourceMap: true,
   })
 );
 app.use(express.static(join(__dirname, "public")));
@@ -48,12 +48,12 @@ app.use(
       maxAge: 60 * 60 * 24 * 15,
       sameSite: "lax",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production"
+      secure: process.env.NODE_ENV === "production",
     },
     store: new (connectMongo(expressSession))({
       mongooseConnection: mongoose.connection,
-      ttl: 60 * 60 * 24
-    })
+      ttl: 60 * 60 * 24,
+    }),
   })
 );
 app.use(basicAuthenticationDeserializer);
