@@ -183,7 +183,6 @@ router.post("/reset", (req, res, next) => {
 });
 
 router.post("/updatePasswordViaEmail", (req, res, next) => {
-  console.log("in backend, my req body", req.body);
   const { email, password, resetPasswordToken } = req.body;
 
   User.findOne({ email: email, resetPasswordToken: resetPasswordToken })
@@ -204,6 +203,50 @@ router.post("/updatePasswordViaEmail", (req, res, next) => {
     })
     .catch((err) => {
       console.log("there was an error", err);
+    });
+});
+
+router.post("/updatePassword", (req, res, next) => {
+  const userId = req.session.user;
+  const { password, new_password } = req.body;
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        console.log("user is null");
+        res.json("No user logged in.");
+        res.status(403);
+        return Promise.reject(new Error("No user logged in."));
+      } else {
+        console.log("this is the user i am going to update", user);
+        return bcryptjs.compare(password, user.passwordHash);
+      }
+    })
+    .then((result) => {
+      console.log("este e o resultado da comparacao", result);
+      if (result) {
+        bcryptjs.hash(new_password, 10).then((hash) => {
+          User.findById(userId)
+          .then(user => {
+            user.passwordHash = hash;
+            user.save();
+            console.log('user updated password', user);
+            res.status(200).json("Password updated");
+          })
+          .catch(err => {
+            console.log('not possible to update password', err);
+            res.json("Server error when trying to update password");
+            res.status(400);
+          })
+        });
+      } else {
+        console.log("we found the user but the password is wrong");
+        res.json("Wrong Password.");
+        res.status(401);
+        return Promise.reject(new Error("Wrong Password."));
+      }
+    })
+    .catch((err) => {
+      console.log("error", err);
     });
 });
 
