@@ -5,9 +5,7 @@ const router = new Router();
 const Product = require("./../models/product");
 const uploader = require("./../middleware/multer-configuration");
 
-
-router.post("/create",  uploader.array('image', 5), async (req, res, next) => {
-
+router.post("/create", uploader.array("image", 5), async (req, res, next) => {
   const {
     type,
     model,
@@ -16,7 +14,7 @@ router.post("/create",  uploader.array('image', 5), async (req, res, next) => {
     barCode,
     internalCode,
     description,
-    available_quantity
+    available_quantity,
   } = req.body;
 
   let imageUrls = [];
@@ -24,8 +22,10 @@ router.post("/create",  uploader.array('image', 5), async (req, res, next) => {
     imageUrls.push(req.files[i].url);
   }
 
-  if(imageUrls.length === 0) {
-    imageUrls = ['https://res.cloudinary.com/dgmvfq29c/image/upload/v1586793875/Tabacaria-Rossio-Images-Uploads/default_image_mxkvcj.png'];
+  if (imageUrls.length === 0) {
+    imageUrls = [
+      "https://res.cloudinary.com/dgmvfq29c/image/upload/v1586793875/Tabacaria-Rossio-Images-Uploads/default_image_mxkvcj.png",
+    ];
   }
 
   Product.create({
@@ -33,28 +33,28 @@ router.post("/create",  uploader.array('image', 5), async (req, res, next) => {
     model,
     brand,
     image: imageUrls,
-    price: price*100,
+    price: price * 100,
     barCode,
     internalCode,
     description,
-    available_quantity
+    available_quantity,
   })
-    .then(product => {
+    .then((product) => {
       res.json({ product });
     })
-    .catch(error => {
-      console.log('not possible to create due to', error);
+    .catch((error) => {
+      console.log("not possible to create due to", error);
       next(error);
     });
 });
 
 router.get("/display-all", async (req, res, next) => {
-    try {
-      const product = await Product.find();
-      res.json({product });
-    } catch (error) {
-      next(error);
-    }
+  try {
+    const product = await Product.find();
+    res.json({ product });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.get("/info/:id", async (req, res, next) => {
@@ -65,7 +65,7 @@ router.get("/info/:id", async (req, res, next) => {
     try {
       const product = await Product.findById(productId);
       if (!product) throw new Error("Product not found");
-      res.json({product});
+      res.json({ product });
     } catch (error) {
       next(error);
     }
@@ -87,7 +87,6 @@ router.post("/delete/:id", async (req, res, next) => {
 });
 
 router.post("/edit/:id", async (req, res, next) => {
-
   const productId = req.params.id;
 
   const {
@@ -97,26 +96,49 @@ router.post("/edit/:id", async (req, res, next) => {
     barCode,
     internalCode,
     description,
-    available_quantity
+    available_quantity,
   } = req.body;
-  Product.findByIdAndUpdate(productId,{
+  Product.findByIdAndUpdate(productId, {
     model,
     brand,
-    price: price*100,
+    price: price * 100,
     barCode,
     internalCode,
     description,
     available_quantity,
-    lastUpdate: new Date()
+    lastUpdate: new Date(),
   })
-  .then(product => {
+    .then((product) => {
       res.json({ product });
     })
-    .catch(error => {
-      console.log('not possible to update due to', error);
+    .catch((error) => {
+      console.log("not possible to update due to", error);
       next(error);
     });
- 
+});
+
+router.post("/delete-image", (req, res, next) => {
+  const { id, index } = req.body;
+  Product.findById(id)
+    .then((product) => {
+      if (product.image.length >= 2) {
+        const newImageArray = product.image.splice(index, 1);
+        product.image = newImageArray;
+        product.markModified("image");
+        //since image is an array the db wont know it change, so we need to use markModified before saving.
+        product.save();
+        res.json("Image deleted");
+      } else {
+        product.image = undefined;
+        product.save();
+        res.json("Image deleted");
+      }
+    })
+    .catch((err) => {
+      console.log("not possible to delete image due to", err);
+      res.json("Not possible to delete image.");
+      res.status(403);
+    });
 });
 
 module.exports = router;
