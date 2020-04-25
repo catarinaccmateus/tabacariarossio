@@ -15,7 +15,7 @@ const schema = new mongoose.Schema({
   description: String,
   image: {
         type: Array,
-        default: ['https://res.cloudinary.com/dgmvfq29c/image/upload/v1586793875/Tabacaria-Rossio-Images-Uploads/default_image_mxkvcj.png']
+        default: ['https://res.cloudinary.com/dgmvfq29c/image/upload/v1586793875/Tabacaria-Rossio-Images-Uploads/default_image_mxkvcj.png'],
       },
   available_quantity: {
     type: Number,

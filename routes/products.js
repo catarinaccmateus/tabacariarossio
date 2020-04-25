@@ -122,8 +122,7 @@ router.post("/delete-image", (req, res, next) => {
   Product.findById(id)
     .then((product) => {
       if (product.image.length >= 2) {
-        const newImageArray = product.image.splice(index, 1);
-        product.image = newImageArray;
+        product.image.splice(index, 1);;
         product.markModified("image");
         //since image is an array the db wont know it change, so we need to use markModified before saving.
         product.save();
@@ -140,5 +139,27 @@ router.post("/delete-image", (req, res, next) => {
       res.status(403);
     });
 });
+
+router.post(
+  "/uploadImage/:id",
+  uploader.single("image"),
+  async (req, res, next) => {
+    console.log("params id", req.params.id);
+    const productId = req.params.id;
+    const imageUrl = req.file.url;
+    Product.findByIdAndUpdate(
+      productId,
+      { $push: { image: imageUrl } },
+      function(err, result) {
+        if (err) {
+          res.send(err);
+        } else {
+          console.log('this is the result', result);
+          res.send("Image added");
+        }
+      }
+    );
+  }
+);
 
 module.exports = router;
