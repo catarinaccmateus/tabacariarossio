@@ -54,6 +54,11 @@ const schema = new mongoose.Schema({
     enum: ["user", "admin", "employee"],
     default: "user"
   },
+  orders: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      ref: 'Order'
+  },
   creationDate: { type: Date, default: Date.now }
 });
 

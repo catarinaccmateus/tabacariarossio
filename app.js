@@ -15,6 +15,7 @@ const bindUserToViewLocals = require("./middleware/bind-user-to-view-locals.js")
 const indexRouter = require("./routes/index");
 const authenticationRouter = require("./routes/authentication");
 const productsRouter = require("./routes/products");
+const ordersRouter = require('./routes/orders');
 
 const app = express();
 
@@ -61,6 +62,7 @@ app.use(bindUserToViewLocals);
 
 app.use("/api/authentication", authenticationRouter);
 app.use("/api/products", productsRouter);
+app.use("/api/orders", ordersRouter);
 app.use("/", indexRouter);
 
 // Catch missing routes and forward to error handler
