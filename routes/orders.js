@@ -7,15 +7,15 @@ router.post("/create-order", (req, res, next) => {
   const { basket, user, total } = req.body;
   console.log('bsket', basket);
   Order.create({
-    user_id: user._id,
+    user_id: user,
     products_basket: basket,
     total,
   })
     .then((order) => {
-      console.log("Order created", order);
+      res.json(order)
     })
     .catch((err) => {
-      console.log("order not created", err);
+      res.json(err)
     });
 });
 
