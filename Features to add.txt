@@ -1,24 +1,25 @@
 AUTHENTICATION
 
-- Email confirmation prior registration
-- Password recovery
-- Edit/Add address
+- Email confirmation prior registration 
+- Password recovery - done
+- Edit/Add address - done
 
 
 USER
 
-- Search products on search-bar
-- Only show products available
+- Search products on search-bar - done
+- Only show products available -  done
+- order products by price
+- filter products by type, brand?
 - Check previous orders
 - Save Favorites
 - Send email when product on stock
-- Possible chat?
-- Order Basket
+- Possible chat? - not now
+- Order Basket - done
 - Payment: credit card/ bank transfer/ multibanco
-- Receive email when order completed with all details
-- Receive email with invoice
-- Add pop up sign-in/sign-up
-- Add pop up "item added to basket"
+- Receive email when order completed with all details- done
+- Receive email with invoice -done
+- Add pop up sign-in/sign-up -done
 
 
 STORE 
@@ -26,9 +27,12 @@ STORE
 Admin & Employee
 - Add products - done
 - Display Products - done
-- Receive an email with orders
+- Receive an email with orders -done
 - Manage orders (pending, sent, invoice sent, completed)
 
 Admin
 - Add/Remove employee users or change their password.
 
+
+THINGS TO CHANGE WHEN DEPLOYING
+- Nodemailer - email/password and all emails written, check links that indicate localhost.

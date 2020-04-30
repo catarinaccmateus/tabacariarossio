@@ -144,7 +144,6 @@ router.post(
   "/uploadImage/:id",
   uploader.single("image"),
   async (req, res, next) => {
-    console.log("params id", req.params.id);
     const productId = req.params.id;
     const imageUrl = req.file.url;
     Product.findByIdAndUpdate(
