@@ -68,6 +68,7 @@ router.post("/get-order-details/:order_id", (req, res, next) => {
   const orderId = req.params.order_id;
   console.log(orderId);
   Order.findById(orderId)
+    .populate("user_id")
     .then((order) => {
       res.json({ order });
     })
@@ -78,10 +79,21 @@ router.post("/get-order-details/:order_id", (req, res, next) => {
 });
 
 router.get("/get-all-orders/:user_id", (req, res, next) => {
-const user = req.params.user_id;
+  const user = req.params.user_id;
   Order.find({
-    user_id: user
+    user_id: user,
   })
+    .then((orders) => {
+      res.json(orders);
+    })
+    .catch((err) => {
+      res.json(err);
+    });
+});
+
+router.get("/get-all-orders", (req, res, next) => {
+  Order.find()
+    .populate("user_id")
     .then((orders) => {
       res.json(orders);
     })
