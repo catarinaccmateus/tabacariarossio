@@ -24,6 +24,7 @@ const schema = new mongoose.Schema({
     type: String,
     enum: ["bank_transfer", "credit_card", "mbway"],
   },
+  invoice_files: Array,
   comments: {
     type: Array,
     default: [{text: "", date: "", user: ""}]

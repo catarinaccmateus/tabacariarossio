@@ -101,6 +101,122 @@ router.get("/get-all-orders", (req, res, next) => {
     });
 });
 
+// UPLOADING INVOICE WITH MULTER AND AWS S3
+const AWS = require("aws-sdk");
+const multer = require("multer");
+var storage = multer.memoryStorage();
+var upload = multer({ storage: storage });
+let s3bucket = new AWS.S3({
+  accessKeyId: process.env.AWS_API_KEY,
+  secretAccessKey: process.env.AWS_API_SECRET,
+  region: process.env.AWS_REGION,
+});
+
+router.post(
+  "/uploadInvoice/:order_id",
+  upload.single("file"),
+  (req, res, next) => {
+    const orderId = req.params.order_id;
+    const file = req.file;
+    console.log("file", file);
+    const s3FileURL = process.env.AWS_Uploaded_File_URL_LINK;
+
+    let params = {
+      Bucket: process.env.AWS_API_BUCKET_NAME,
+      Key: file.originalname,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+      ACL: "public-read",
+    };
+
+    s3bucket.upload(params, (err, data) => {
+      if (err) {
+        console.log("error", err);
+        res.status(500).json({ error: true, Message: err });
+      } else {
+        console.log("success", data);
+
+        let newFileUploaded = {
+          fileLink: s3FileURL + file.originalname,
+          s3_key: params.Key,
+        };
+        console.log("new file", newFileUploaded);
+        Order.findByIdAndUpdate(
+          orderId,
+          { $push: { invoice_files: newFileUploaded } },
+          (err, result) => {
+            if (err) {
+              res.send(err);
+            } else {
+              console.log("file added", result);
+              res.send("File added");
+            }
+          }
+        );
+      }
+    });
+  }
+);
+
+router.post("/deleteInvoice/:order_id", (req, res, next) => {
+  const orderId = req.params.order_id;
+  const { key } = req.body;
+  Order.findByIdAndUpdate(
+    orderId,
+    { $pull: { invoice_files: { s3_key: key } } },
+    (err, result) => {
+      if (err) {
+        return next(err);
+      }
+      let params = {
+        Bucket: process.env.AWS_API_BUCKET_NAME,
+        Key: key,
+      };
+
+      s3bucket.deleteObject(params, (err, data) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.send({
+            status: "200",
+            responseType: "string",
+            response: "success",
+          });
+        }
+      });
+    }
+  );
+
+  /*)
+  DOCUMENT.findByIdAndRemove(req.params.id, (err, result) => {
+   
+    //Now Delete the file from AWS-S3
+    // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#deleteObject-property
+    let s3bucket = new AWS.S3({
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      region: process.env.AWS_REGION
+    });
+
+    let params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: result.s3_key
+    };
+
+    s3bucket.deleteObject(params, (err, data) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send({
+          status: "200",
+          responseType: "string",
+          response: "success"
+        });
+      }
+    });
+  });*/
+});
+
 router.post("/update-order/:order_id", (req, res, next) => {
   const { key, value } = req.body.data;
   const orderId = req.params.order_id;
@@ -108,7 +224,6 @@ router.post("/update-order/:order_id", (req, res, next) => {
     .populate("user_id")
     .then((order) => {
       const user = order.user_id;
-      console.log("user", user);
 
       const transporter = nodemailer.createTransport({
         service: "gmail",
@@ -145,7 +260,6 @@ router.post("/update-order/:order_id", (req, res, next) => {
         Tabacaria Rossio`,
         };
       }
-      console.log("mail options", mailOptions);
       transporter.sendMail(mailOptions, (err, response) => {
         if (err) {
           console.log("there was an error", err);
@@ -156,6 +270,7 @@ router.post("/update-order/:order_id", (req, res, next) => {
       res.json(order);
     })
     .catch((err) => {
+      console.log("ERROR", err);
       res.json(err);
     });
 });
@@ -175,7 +290,7 @@ router.post("/add-comment-order/:order_id", (req, res, next) => {
         },
       },
     },
-    function(err, result) {
+    (err, result) => {
       if (err) {
         res.send(err);
       } else {
