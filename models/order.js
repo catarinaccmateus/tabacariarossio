@@ -24,6 +24,10 @@ const schema = new mongoose.Schema({
     type: String,
     enum: ["bank_transfer", "credit_card", "mbway"],
   },
+  comments: {
+    type: Array,
+    default: [{text: "", date: "", user: ""}]
+  },
   creationDate: { type: Date, default: Date.now },
 });
 
