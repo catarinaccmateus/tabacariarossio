@@ -8,6 +8,7 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 //import crypto from 'crypto'; -> Parsing error: 'import' and 'export' may appear only with 'sourceType: module'
 
+//SIGN-UP A NEW USER
 router.post("/sign-up", (req, res, next) => {
   const { name, username, email, password } = req.body;
   bcryptjs
@@ -33,6 +34,56 @@ router.post("/sign-up", (req, res, next) => {
     });
 });
 
+//SIGN-IN ONE USER
+router.post("/sign-in", (req, res, next) => {
+  let userId;
+  const { email, password } = req.body;
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error("There's no user with that email."));
+      } else {
+        userId = user._id;
+        return bcryptjs.compare(password, user.passwordHash);
+      }
+    })
+    .then((result) => {
+      if (result) {
+        req.session.user = userId;
+        res.redirect("/private");
+      } else {
+        return Promise.reject(new Error("Wrong password."));
+      }
+    })
+    .catch((error) => {
+      next(error);
+    });
+});
+
+//SIGN-OUR ONE USER
+router.post("/sign-out", (req, res, next) => {
+  req.session.destroy();
+  res.redirect("/");
+});
+
+//GET INFO ABOUT THE USER THAS IS LOGGED IN
+router.get("/user-information", async (req, res, next) => {
+  const userId = req.session.user;
+  //console.log('I am in the server, the user id is', req.session.user);
+  if (!userId) {
+    res.json({});
+  } else {
+    try {
+      const user = await User.findById(userId);
+      if (!user) throw new Error("Signed in user not found");
+      res.json({ user });
+    } catch (error) {
+      next(error);
+    }
+  }
+});
+
+//EDITING ONE USER DETAILS
 router.post("/edit-user", (req, res, next) => {
   const {
     name,
@@ -61,52 +112,7 @@ router.post("/edit-user", (req, res, next) => {
     });
 });
 
-router.post("/sign-in", (req, res, next) => {
-  let userId;
-  const { email, password } = req.body;
-  User.findOne({ email })
-    .then((user) => {
-      if (!user) {
-        return Promise.reject(new Error("There's no user with that email."));
-      } else {
-        userId = user._id;
-        return bcryptjs.compare(password, user.passwordHash);
-      }
-    })
-    .then((result) => {
-      if (result) {
-        req.session.user = userId;
-        res.redirect("/private");
-      } else {
-        return Promise.reject(new Error("Wrong password."));
-      }
-    })
-    .catch((error) => {
-      next(error);
-    });
-});
-
-router.post("/sign-out", (req, res, next) => {
-  req.session.destroy();
-  res.redirect("/");
-});
-
-router.get("/user-information", async (req, res, next) => {
-  const userId = req.session.user;
-  //console.log('I am in the server, the user id is', req.session.user);
-  if (!userId) {
-    res.json({});
-  } else {
-    try {
-      const user = await User.findById(userId);
-      if (!user) throw new Error("Signed in user not found");
-      res.json({ user });
-    } catch (error) {
-      next(error);
-    }
-  }
-});
-
+//1. RECOVER PASSWORD OF ONE USER SENDING LINK VIA NODEMAILER
 router.post("/password-recovery", (req, res, next) => {
   if (req.body.email === "") {
     res.status(400).send("email required");
@@ -160,6 +166,7 @@ router.post("/password-recovery", (req, res, next) => {
     });
 });
 
+//2. CHECKING IF PASSWORD RECOVER LINK IS VALID
 router.post("/reset", (req, res, next) => {
   User.findOne({
     resetPasswordToken: req.body.params,
@@ -182,6 +189,7 @@ router.post("/reset", (req, res, next) => {
     });
 });
 
+//3. UPDATING PASSWORD VIA EMAIL
 router.post("/updatePasswordViaEmail", (req, res, next) => {
   const { email, password, resetPasswordToken } = req.body;
 
@@ -206,6 +214,7 @@ router.post("/updatePasswordViaEmail", (req, res, next) => {
     });
 });
 
+//UPDATING PASSWORD WHEN LOGGED IN
 router.post("/updatePassword", (req, res, next) => {
   const userId = req.session.user;
   const { password, new_password } = req.body;

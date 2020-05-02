@@ -1,6 +1,6 @@
 Next:
-UPLOAD FATURA.RECIBO
-GESTAO DE ENCOMENDAS
+UPLOAD FATURA.RECIBO - done
+GESTAO DE ENCOMENDAS - done
 GESTAO DE UTILIZADORES
 REDUZIR STOCK QUANDO SE LANÇA UMA ENCOMENDA E AUMENTAR QUANDO SE CANCELA
 ENVIAR EMAIL QUANDO SE ALTERA O ESTADO DE ENCOMENDA - done
@@ -21,12 +21,12 @@ USER
 - Only show products available -  done
 - order products by price
 - filter products by type, brand?
-- Check previous orders
+- Check previous orders - done
 - Save Favorites
 - Send email when product on stock
 - Possible chat? - not now
 - Order Basket - done
-- Payment: credit card/ bank transfer/ multibanco
+- Payment: credit card/ bank transfer/ multibanco -stripe, reduniq
 - Receive email when order completed with all details- done
 - Receive email with invoice -done
 - Add pop up sign-in/sign-up -done
@@ -38,7 +38,7 @@ Admin & Employee
 - Add products - done
 - Display Products - done
 - Receive an email with orders -done
-- Manage orders (pending, sent, invoice sent, completed)
+- Manage orders (pending, sent, invoice sent, completed) - done
 
 Admin
 - Add/Remove employee users or change their password.
@@ -47,3 +47,4 @@ Admin
 THINGS TO CHANGE WHEN DEPLOYING
 - Nodemailer - email/password and all emails written, check links that indicate localhost.
 - Cloudinary set up
+- AWS S3 SET UP

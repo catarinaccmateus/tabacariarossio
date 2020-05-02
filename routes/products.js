@@ -5,6 +5,7 @@ const router = new Router();
 const Product = require("./../models/product");
 const uploader = require("./../middleware/multer-configuration");
 
+//CREATING A PRODUCT
 router.post("/create", uploader.array("image", 5), async (req, res, next) => {
   const {
     type,
@@ -48,6 +49,7 @@ router.post("/create", uploader.array("image", 5), async (req, res, next) => {
     });
 });
 
+//GETTING ALL THE PRODUCTS
 router.get("/display-all", async (req, res, next) => {
   try {
     const product = await Product.find();
@@ -57,6 +59,7 @@ router.get("/display-all", async (req, res, next) => {
   }
 });
 
+//GETTING THE INFO ABOUT ONE PRODUCT
 router.get("/info/:id", async (req, res, next) => {
   const productId = req.params.id;
   if (!productId) {
@@ -72,6 +75,7 @@ router.get("/info/:id", async (req, res, next) => {
   }
 });
 
+//DELETING ONE PRODUCT
 router.post("/delete/:id", async (req, res, next) => {
   const productId = req.params.id;
   if (!productId) {
@@ -86,6 +90,7 @@ router.post("/delete/:id", async (req, res, next) => {
   }
 });
 
+//EDITING ONE PRODUCT
 router.post("/edit/:id", async (req, res, next) => {
   const productId = req.params.id;
 
@@ -117,6 +122,7 @@ router.post("/edit/:id", async (req, res, next) => {
     });
 });
 
+//DELETING THE IMAGE OF ONE PRODUCT
 router.post("/delete-image", (req, res, next) => {
   const { id, index } = req.body;
   Product.findById(id)
@@ -140,6 +146,7 @@ router.post("/delete-image", (req, res, next) => {
     });
 });
 
+//ADDING AN IMAGE TO ONE PRODUCT
 router.post(
   "/uploadImage/:id",
   uploader.single("image"),

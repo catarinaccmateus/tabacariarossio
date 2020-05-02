@@ -1,8 +1,31 @@
 const { Router } = require("express");
 const router = new Router();
 const Order = require("./../models/order");
-const nodemailer = require("nodemailer");
 
+//NODEMAILER SET UP - SENDING E-MAILS
+const nodemailer = require("nodemailer");
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: `${process.env.EMAIL_ADDRESS}`,
+    pass: `${process.env.EMAIL_PASSWORD}`,
+  },
+});
+
+// MULTER AND AWS S3 SET UP - UPLOADING FILES
+const AWS = require("aws-sdk");
+const multer = require("multer");
+var storage = multer.memoryStorage();
+var upload = multer({ storage: storage });
+let s3bucket = new AWS.S3({
+  accessKeyId: process.env.AWS_API_KEY,
+  secretAccessKey: process.env.AWS_API_SECRET,
+  region: process.env.AWS_REGION,
+});
+let mailOptions = "";
+
+
+//CREATING AN ORDER
 router.post("/create-order", (req, res, next) => {
   const { basket, user, total } = req.body;
   Order.create({
@@ -18,6 +41,47 @@ router.post("/create-order", (req, res, next) => {
     });
 });
 
+//GET THE DETAILS FROM ONE ORDER
+router.get("/get-order-details/:order_id", (req, res, next) => {
+  const orderId = req.params.order_id;
+  Order.findById(orderId)
+    .populate("user_id")
+    .then((order) => {
+      res.json({ order });
+    })
+    .catch((err) => {
+      res.json(err);
+      next(err);
+    });
+});
+
+//GET ALL THE ORDERS FROM ONE USER
+router.get("/get-all-orders/:user_id", (req, res, next) => {
+  const user = req.params.user_id;
+  Order.find({
+    user_id: user,
+  })
+    .then((orders) => {
+      res.json(orders);
+    })
+    .catch((err) => {
+      res.json(err);
+    });
+});
+
+//GET ALL THE ORDERS
+router.get("/get-all-orders", (req, res, next) => {
+  Order.find()
+    .populate("user_id")
+    .then((orders) => {
+      res.json(orders);
+    })
+    .catch((err) => {
+      res.json(err);
+    });
+});
+
+//SELECTING THE PAYMENT METHOD
 router.post("/payment-method-selected", (req, res, next) => {
   const { order_id, payment_option } = req.body;
   Order.findByIdAndUpdate(order_id, {
@@ -26,15 +90,7 @@ router.post("/payment-method-selected", (req, res, next) => {
     .populate("user_id")
     .then((order) => {
       const user = order.user_id;
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: `${process.env.EMAIL_ADDRESS}`,
-          pass: `${process.env.EMAIL_PASSWORD}`,
-        },
-      });
-
-      const mailOptions = {
+      mailOptions = {
         from: "tabacariarossioteste@gmail.com",
         to: `${user.email}`,
         subject: "Confirmação de encomenda",
@@ -64,63 +120,17 @@ router.post("/payment-method-selected", (req, res, next) => {
     });
 });
 
-router.get("/get-order-details/:order_id", (req, res, next) => {
-  const orderId = req.params.order_id;
-  Order.findById(orderId)
-    .populate("user_id")
-    .then((order) => {
-      res.json({ order });
-    })
-    .catch((err) => {
-      res.json(err);
-      next(err);
-    });
-});
 
-router.get("/get-all-orders/:user_id", (req, res, next) => {
-  const user = req.params.user_id;
-  Order.find({
-    user_id: user,
-  })
-    .then((orders) => {
-      res.json(orders);
-    })
-    .catch((err) => {
-      res.json(err);
-    });
-});
-
-router.get("/get-all-orders", (req, res, next) => {
-  Order.find()
-    .populate("user_id")
-    .then((orders) => {
-      res.json(orders);
-    })
-    .catch((err) => {
-      res.json(err);
-    });
-});
-
-// UPLOADING INVOICE WITH MULTER AND AWS S3
-const AWS = require("aws-sdk");
-const multer = require("multer");
-var storage = multer.memoryStorage();
-var upload = multer({ storage: storage });
-let s3bucket = new AWS.S3({
-  accessKeyId: process.env.AWS_API_KEY,
-  secretAccessKey: process.env.AWS_API_SECRET,
-  region: process.env.AWS_REGION,
-});
-
+//UPLOADING AN INVOICE TO AN ORDER
 router.post(
   "/uploadInvoice/:order_id",
   upload.single("file"),
   (req, res, next) => {
     const orderId = req.params.order_id;
     const file = req.file;
-    console.log("file", file);
-    const s3FileURL = process.env.AWS_Uploaded_File_URL_LINK;
 
+    //1. UPLOADING DOCUMENT TO AWS S3
+    const s3FileURL = process.env.AWS_Uploaded_File_URL_LINK;
     let params = {
       Bucket: process.env.AWS_API_BUCKET_NAME,
       Key: file.originalname,
@@ -128,42 +138,59 @@ router.post(
       ContentType: file.mimetype,
       ACL: "public-read",
     };
-
     s3bucket.upload(params, (err, data) => {
       if (err) {
         console.log("error", err);
         res.status(500).json({ error: true, Message: err });
       } else {
-        console.log("success", data);
-
         let newFileUploaded = {
           fileLink: s3FileURL + file.originalname,
           s3_key: params.Key,
         };
-        console.log("new file", newFileUploaded);
-        Order.findByIdAndUpdate(
-          orderId,
-          { $push: { invoice_files: newFileUploaded } },
-          (err, result) => {
-            if (err) {
-              res.send(err);
-            } else {
-              console.log("file added", result);
-              res.send("File added");
-            }
-          }
-        );
+        //2. IF THE FILE IS SUCCESSFULLY UPLOADED, WILL UPDATE THE DATABASE.
+        Order.findByIdAndUpdate(orderId, {
+          $push: { invoice_files: newFileUploaded },
+          invoice: "issued",
+        })
+          .populate("user_id")
+          .then((order) => {
+            const user = order.user_id;
+            //3. IF THE DATABASE IS SUCCESSFULLY UPDATED, WILL SEND AN EMAIL TO THE USER WITH THE LINK TO THE INVOICE.
+            mailOptions = {
+              from: "tabacariarossioteste@gmail.com",
+              to: `${user.email}`,
+              subject: `Fatura-recibo da encomenda ${order._id}`,
+              text: `Boa tarde ${user.name}, \n \n 
+        Confirmamos que a fatura-recibo da sua encomenda com o código ${order._id} foi emitida e poderá ser consultada em ${newFileUploaded.fileLink} . \n
+        Poderá consultar os detalhes da encomenda em  http://localhost:3000/my-orders/${order._id}. \n
+        Cumprimentos, \n
+        A Equipa \n
+        Tabacaria Rossio`,
+            };
+            transporter.sendMail(mailOptions, (err, response) => {
+              if (err) {
+                console.log("there was an error", err);
+              } else {
+                res.status(200).json("Recovery email sent.");
+              }
+            });
+            res.send("File added");
+          })
+          .catch((err) => {
+            res.send(err);
+          });
       }
     });
   }
 );
 
+//DELETING THE INVOICE TO AN ORDER
 router.post("/deleteInvoice/:order_id", (req, res, next) => {
   const orderId = req.params.order_id;
   const { key } = req.body;
   Order.findByIdAndUpdate(
     orderId,
-    { $pull: { invoice_files: { s3_key: key } } },
+    { $pull: { invoice_files: { s3_key: key } }, invoice: "not issued" },
     (err, result) => {
       if (err) {
         return next(err);
@@ -217,6 +244,7 @@ router.post("/deleteInvoice/:order_id", (req, res, next) => {
   });*/
 });
 
+//UPDATING ORDER STATUS
 router.post("/update-order/:order_id", (req, res, next) => {
   const { key, value } = req.body.data;
   const orderId = req.params.order_id;
@@ -225,41 +253,18 @@ router.post("/update-order/:order_id", (req, res, next) => {
     .then((order) => {
       const user = order.user_id;
 
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: `${process.env.EMAIL_ADDRESS}`,
-          pass: `${process.env.EMAIL_PASSWORD}`,
-        },
-      });
-
-      let mailOptions = "";
-      console.log("value", value);
-      if (key === "status") {
-        mailOptions = {
-          from: "tabacariarossioteste@gmail.com",
-          to: `${user.email}`,
-          subject: "Alteração do estado de encomenda",
-          text: `Boa tarde ${user.name}, \n \n 
+      mailOptions = {
+        from: "tabacariarossioteste@gmail.com",
+        to: `${user.email}`,
+        subject: "Alteração do estado de encomenda",
+        text: `Boa tarde ${user.name}, \n \n 
         Confirmamos que o estado da encomenda com o código ${order._id} foi alterado para ${value}. \n
         Poderá consultar os detalhes da encomenda em  http://localhost:3000/my-orders/${order._id}. \n
         Cumprimentos, \n
         A Equipa \n
         Tabacaria Rossio`,
-        };
-      } else if (key === "invoice") {
-        mailOptions = {
-          from: "tabacariarossioteste@gmail.com",
-          to: `${user.email}`,
-          subject: `Fatura-recibo da encomenda ${order._id}`,
-          text: `Boa tarde ${user.name}, \n \n 
-        Confirmamos que a fatura-recibo da sua encomenda com o código ${order._id} foi emitida. \n
-        Poderá consultar os detalhes da encomenda em  http://localhost:3000/my-orders/${order._id}. \n
-        Cumprimentos, \n
-        A Equipa \n
-        Tabacaria Rossio`,
-        };
-      }
+      };
+
       transporter.sendMail(mailOptions, (err, response) => {
         if (err) {
           console.log("there was an error", err);
@@ -275,6 +280,7 @@ router.post("/update-order/:order_id", (req, res, next) => {
     });
 });
 
+//ADDING COMMENTS TO AN ORDER
 router.post("/add-comment-order/:order_id", (req, res, next) => {
   const { text, user } = req.body.data;
   console.log(req.body);
