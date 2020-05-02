@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const router = new Router();
 const Order = require("./../models/order");
+const Product = require("./../models/product");
 
 //NODEMAILER SET UP - SENDING E-MAILS
 const nodemailer = require("nodemailer");
@@ -24,19 +25,65 @@ let s3bucket = new AWS.S3({
 });
 let mailOptions = "";
 
-
-//CREATING AN ORDER
+//CREATING AN ORDER & SELECTING THE PAYMENT METHOD
 router.post("/create-order", (req, res, next) => {
-  const { basket, user, total } = req.body;
+  console.log("in backend");
+  const { payment_option, basket, user, total } = req.body;
+  console.log(payment_option, basket, user, total);
   Order.create({
-    user_id: user,
+    user_id: user._id,
     products_basket: basket,
+    payment_method: payment_option,
     total,
   })
     .then((order) => {
-      res.json(order);
+      console.log("order created", order);
+      for (let product of basket) {
+        const id = product._id;
+        Product.findByIdAndUpdate(
+          id,
+          { $inc: { available_quantity: -product.order_quantity } },
+          (err, result) => {
+            if (err) {
+              console.log("product not updated", err);
+              res.send(err);
+            } else {
+              console.log("product updated", result);
+              const user = order.user_id;
+              mailOptions = {
+                from: "tabacariarossioteste@gmail.com",
+                to: `${user.email}`,
+                subject: "Confiração de encomenda",
+                text: `Boa tarde ${user.name}, \n \n 
+                 Confirmamos a receção da encomenda com o código ${order._id} \n
+                 O valor total é de ${order.total}.
+                  Poderá consultar os detalhes da encomenda em  http://localhost:3000/my-orders/${order._id}. \n
+                 O pagamento encontra-se pendente.
+                 Por favor realize a transferência do valor total para o IBAN XXXXXXXXXXXXXX e envie o comprovativo de pagamento para xxxx@xxx com o número de encomenda em assunto. Tem 3 dias úteis para finalizar o seu pagamento, sendo que a encomenda será cancelada automáticamente caso não proceda ao pagamento do seu valor. \n
+                 Cumprimentos, \n
+                 A Equipa \n
+                 Tabacaria Rossio`,
+              };
+
+              transporter.sendMail(mailOptions, (err, response) => {
+                if (err) {
+                  console.log(
+                    "there was an error sending an email with the order",
+                    err
+                  );
+                } else {
+                  console.log("email with order sent");
+                  res.status(200).json("Recovery email sent.");
+                }
+              });
+              res.json(order);
+            }
+          }
+        );
+      }
     })
     .catch((err) => {
+      console.log("order not created", err);
       res.json(err);
     });
 });
@@ -80,46 +127,6 @@ router.get("/get-all-orders", (req, res, next) => {
       res.json(err);
     });
 });
-
-//SELECTING THE PAYMENT METHOD
-router.post("/payment-method-selected", (req, res, next) => {
-  const { order_id, payment_option } = req.body;
-  Order.findByIdAndUpdate(order_id, {
-    payment_method: payment_option,
-  })
-    .populate("user_id")
-    .then((order) => {
-      const user = order.user_id;
-      mailOptions = {
-        from: "tabacariarossioteste@gmail.com",
-        to: `${user.email}`,
-        subject: "Confirmação de encomenda",
-        text: `Boa tarde ${user.name}, \n \n 
-        Confirmamos a receção da encomenda com o código ${order._id} \n
-        O valor total é de ${order.total}.
-        Poderá consultar os detalhes da encomenda em  http://localhost:3000/my-orders/${order._id}. \n
-        O pagamento encontra-se pendente.
-        Por favor realize a transferência do valor total para o IBAN XXXXXXXXXXXXXX e envie o comprovativo de pagamento para xxxx@xxx com o número de encomenda em assunto. Tem 3 dias úteis para finalizar o seu pagamento, sendo que a encomenda será cancelada automáticamente caso não proceda ao pagamento do seu valor. \n
-        Cumprimentos, \n
-        A Equipa \n
-        Tabacaria Rossio`,
-      };
-
-      transporter.sendMail(mailOptions, (err, response) => {
-        if (err) {
-          console.log("there was an error", err);
-        } else {
-          res.status(200).json("Recovery email sent.");
-        }
-      });
-      res.json(order);
-    })
-    .catch((err) => {
-      res.json(err);
-      next(err);
-    });
-});
-
 
 //UPLOADING AN INVOICE TO AN ORDER
 router.post(
@@ -244,7 +251,7 @@ router.post("/deleteInvoice/:order_id", (req, res, next) => {
   });*/
 });
 
-//UPDATING ORDER STATUS
+//UPDATING ORDER STATUS 
 router.post("/update-order/:order_id", (req, res, next) => {
   const { key, value } = req.body.data;
   const orderId = req.params.order_id;
@@ -252,6 +259,25 @@ router.post("/update-order/:order_id", (req, res, next) => {
     .populate("user_id")
     .then((order) => {
       const user = order.user_id;
+
+      //IF ORDER IS CANCELED, ADD PRODUCTS TO STOCK.
+      if (value === "canceled") {
+        console.log('value is canceled');
+        for (let product of order.products_basket) {
+          const id = product._id;
+          Product.findByIdAndUpdate(
+            id,
+            { $inc: { available_quantity: product.order_quantity } },
+            (err, result) => {
+              if (err) {
+                console.log('not possible to change quantity of product', err)
+              } else {
+                console.log('product quantity changed')
+              }
+            }
+          );
+        }
+      }
 
       mailOptions = {
         from: "tabacariarossioteste@gmail.com",
@@ -272,7 +298,6 @@ router.post("/update-order/:order_id", (req, res, next) => {
           res.status(200).json("Recovery email sent.");
         }
       });
-      res.json(order);
     })
     .catch((err) => {
       console.log("ERROR", err);
