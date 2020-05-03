@@ -10,7 +10,7 @@ const crypto = require("crypto");
 
 //SIGN-UP A NEW USER
 router.post("/sign-up", (req, res, next) => {
-  const { name, username, email, password } = req.body;
+  const { name, username, email, password, role } = req.body;
   bcryptjs
     .hash(password, 10)
     .then((hash) => {
@@ -18,11 +18,16 @@ router.post("/sign-up", (req, res, next) => {
         name,
         username,
         email,
+        role,
         passwordHash: hash,
       });
     })
     .then((user) => {
-      req.session.user = user._id;
+      if (user.role === "user") {
+        //If a user is going to sign up his session is immediately started. Otherwise, if the ADMIN signs up an employee
+        //its session won't be started
+        req.session.user = user._id;
+      }
       res.json({ user });
     })
     .catch((error) => {
@@ -221,34 +226,30 @@ router.post("/updatePassword", (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        console.log("user is null");
         res.json("No user logged in.");
         res.status(403);
         return Promise.reject(new Error("No user logged in."));
       } else {
-        console.log("this is the user i am going to update", user);
         return bcryptjs.compare(password, user.passwordHash);
       }
     })
     .then((result) => {
-      console.log("este e o resultado da comparacao", result);
       if (result) {
         bcryptjs.hash(new_password, 10).then((hash) => {
           User.findById(userId)
-          .then(user => {
-            user.passwordHash = hash;
-            user.save();
-            console.log('user updated password', user);
-            res.status(200).json("Password updated");
-          })
-          .catch(err => {
-            console.log('not possible to update password', err);
-            res.json("Server error when trying to update password");
-            res.status(400);
-          })
+            .then((user) => {
+              user.passwordHash = hash;
+              user.save();
+              console.log("user updated password", user);
+              res.status(200).json("Password updated");
+            })
+            .catch((err) => {
+              console.log("not possible to update password", err);
+              res.json("Server error when trying to update password");
+              res.status(400);
+            });
         });
       } else {
-        console.log("we found the user but the password is wrong");
         res.json("Wrong Password.");
         res.status(401);
         return Promise.reject(new Error("Wrong Password."));
@@ -257,6 +258,31 @@ router.post("/updatePassword", (req, res, next) => {
     .catch((err) => {
       console.log("error", err);
     });
+});
+
+router.get("/get-employees", async (req, res, next) => {
+  const userId = req.session.user;
+  User.find({ role: "employee" })
+    .then((users) => {
+      res.json({ users });
+    })
+    .catch((err) => {
+      res.json(err);
+    });
+});
+
+router.delete("/delete-user/:id", async (req, res, next) => {
+  const user_id = req.params.id;
+  if (!user_id) {
+    res.json({});
+  } else {
+    try {
+      await User.findByIdAndDelete(user_id);
+      res.json({});
+    } catch (error) {
+      next(error);
+    }
+  }
 });
 
 module.exports = router;
