@@ -5,8 +5,13 @@ const router = new Router();
 const Product = require("./../models/product");
 const uploader = require("./../middleware/multer-configuration");
 
+//ROUTE GUARDS
+const routeGuard = require("./../middleware/route-guard");
+const routeGuardAdmin = require("./../middleware/route-guard-for-admin");
+const routeGuardAdminAndEmployee = require("./../middleware/route-guard-for-adminemployee");
+
 //CREATING A PRODUCT
-router.post("/create", uploader.array("image", 5), async (req, res, next) => {
+router.post("/create", routeGuardAdminAndEmployee, uploader.array("image", 5), async (req, res, next) => {
   const {
     type,
     model,
@@ -76,7 +81,7 @@ router.get("/info/:id", async (req, res, next) => {
 });
 
 //DELETING ONE PRODUCT
-router.post("/delete/:id", async (req, res, next) => {
+router.post("/delete/:id", routeGuardAdminAndEmployee, async (req, res, next) => {
   const productId = req.params.id;
   if (!productId) {
     res.json({});
@@ -91,7 +96,7 @@ router.post("/delete/:id", async (req, res, next) => {
 });
 
 //EDITING ONE PRODUCT
-router.post("/edit/:id", async (req, res, next) => {
+router.post("/edit/:id", routeGuardAdminAndEmployee, async (req, res, next) => {
   const productId = req.params.id;
 
   const {
@@ -123,7 +128,7 @@ router.post("/edit/:id", async (req, res, next) => {
 });
 
 //DELETING THE IMAGE OF ONE PRODUCT
-router.post("/delete-image", (req, res, next) => {
+router.post("/delete-image", routeGuardAdminAndEmployee, (req, res, next) => {
   const { id, index } = req.body;
   Product.findById(id)
     .then((product) => {
@@ -148,7 +153,7 @@ router.post("/delete-image", (req, res, next) => {
 
 //ADDING AN IMAGE TO ONE PRODUCT
 router.post(
-  "/uploadImage/:id",
+  "/uploadImage/:id", routeGuardAdminAndEmployee,
   uploader.single("image"),
   async (req, res, next) => {
     const productId = req.params.id;

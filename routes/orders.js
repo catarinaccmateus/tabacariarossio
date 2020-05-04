@@ -3,6 +3,11 @@ const router = new Router();
 const Order = require("./../models/order");
 const Product = require("./../models/product");
 
+//ROUTE GUARDS
+const routeGuard = require("./../middleware/route-guard");
+const routeGuardAdmin = require("./../middleware/route-guard-for-admin");
+const routeGuardAdminAndEmployee = require("./../middleware/route-guard-for-adminemployee");
+
 //NODEMAILER SET UP - SENDING E-MAILS
 const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
@@ -26,7 +31,7 @@ let s3bucket = new AWS.S3({
 let mailOptions = "";
 
 //CREATING AN ORDER & SELECTING THE PAYMENT METHOD
-router.post("/create-order", (req, res, next) => {
+router.post("/create-order", routeGuard, (req, res, next) => {
   console.log("in backend");
   const { payment_option, basket, user, total } = req.body;
   console.log(payment_option, basket, user, total);
@@ -89,7 +94,7 @@ router.post("/create-order", (req, res, next) => {
 });
 
 //GET THE DETAILS FROM ONE ORDER
-router.get("/get-order-details/:order_id", (req, res, next) => {
+router.get("/get-order-details/:order_id", routeGuard, (req, res, next) => {
   const orderId = req.params.order_id;
   Order.findById(orderId)
     .populate("user_id")
@@ -103,7 +108,7 @@ router.get("/get-order-details/:order_id", (req, res, next) => {
 });
 
 //GET ALL THE ORDERS FROM ONE USER
-router.get("/get-all-orders/:user_id", (req, res, next) => {
+router.get("/get-all-orders/:user_id", routeGuard, (req, res, next) => {
   const user = req.params.user_id;
   Order.find({
     user_id: user,
@@ -117,7 +122,7 @@ router.get("/get-all-orders/:user_id", (req, res, next) => {
 });
 
 //GET ALL THE ORDERS
-router.get("/get-all-orders", (req, res, next) => {
+router.get("/get-all-orders", routeGuardAdminAndEmployee, (req, res, next) => {
   Order.find()
     .populate("user_id")
     .then((orders) => {
@@ -130,7 +135,7 @@ router.get("/get-all-orders", (req, res, next) => {
 
 //UPLOADING AN INVOICE TO AN ORDER
 router.post(
-  "/uploadInvoice/:order_id",
+  "/uploadInvoice/:order_id", routeGuardAdminAndEmployee,
   upload.single("file"),
   (req, res, next) => {
     const orderId = req.params.order_id;
@@ -192,7 +197,7 @@ router.post(
 );
 
 //DELETING THE INVOICE TO AN ORDER
-router.post("/deleteInvoice/:order_id", (req, res, next) => {
+router.post("/deleteInvoice/:order_id", routeGuardAdminAndEmployee, (req, res, next) => {
   const orderId = req.params.order_id;
   const { key } = req.body;
   Order.findByIdAndUpdate(
@@ -252,7 +257,7 @@ router.post("/deleteInvoice/:order_id", (req, res, next) => {
 });
 
 //UPDATING ORDER STATUS 
-router.post("/update-order/:order_id", (req, res, next) => {
+router.post("/update-order/:order_id", routeGuardAdminAndEmployee, (req, res, next) => {
   const { key, value } = req.body.data;
   const orderId = req.params.order_id;
   Order.findByIdAndUpdate(orderId, { [key]: value })
@@ -306,7 +311,7 @@ router.post("/update-order/:order_id", (req, res, next) => {
 });
 
 //ADDING COMMENTS TO AN ORDER
-router.post("/add-comment-order/:order_id", (req, res, next) => {
+router.post("/add-comment-order/:order_id", routeGuardAdminAndEmployee, (req, res, next) => {
   const { text, user } = req.body.data;
   console.log(req.body);
   const orderId = req.params.order_id;

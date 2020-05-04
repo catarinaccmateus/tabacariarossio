@@ -5,6 +5,8 @@ const router = new Router();
 const User = require("./../models/user");
 const bcryptjs = require("bcryptjs");
 const nodemailer = require("nodemailer");
+const routeGuard = require("./../middleware/route-guard");
+const routeGuardAdmin = require("./../middleware/route-guard-for-admin");
 const crypto = require("crypto");
 //import crypto from 'crypto'; -> Parsing error: 'import' and 'export' may appear only with 'sourceType: module'
 
@@ -72,7 +74,7 @@ router.post("/sign-out", (req, res, next) => {
 });
 
 //GET INFO ABOUT THE USER THAS IS LOGGED IN
-router.get("/user-information", async (req, res, next) => {
+router.get("/user-information", routeGuard, async (req, res, next) => {
   const userId = req.session.user;
   //console.log('I am in the server, the user id is', req.session.user);
   if (!userId) {
@@ -89,7 +91,7 @@ router.get("/user-information", async (req, res, next) => {
 });
 
 //EDITING ONE USER DETAILS
-router.post("/edit-user", (req, res, next) => {
+router.post("/edit-user", routeGuard, (req, res, next) => {
   const {
     name,
     surname,
@@ -201,7 +203,6 @@ router.post("/updatePasswordViaEmail", (req, res, next) => {
   User.findOne({ email: email, resetPasswordToken: resetPasswordToken })
     .then((user) => {
       if (user !== null) {
-        console.log("user is no null", user);
         bcryptjs.hash(password, 10).then((hash) => {
           user.password = hash;
           user.resetPasswordToken = null;
@@ -220,7 +221,7 @@ router.post("/updatePasswordViaEmail", (req, res, next) => {
 });
 
 //UPDATING PASSWORD WHEN LOGGED IN
-router.post("/updatePassword", (req, res, next) => {
+router.post("/updatePassword", routeGuard, (req, res, next) => {
   const userId = req.session.user;
   const { password, new_password } = req.body;
   User.findById(userId)
@@ -260,7 +261,7 @@ router.post("/updatePassword", (req, res, next) => {
     });
 });
 
-router.get("/get-employees", async (req, res, next) => {
+router.get("/get-employees", routeGuardAdmin, async (req, res, next) => {
   const userId = req.session.user;
   User.find({ role: "employee" })
     .then((users) => {
@@ -271,7 +272,7 @@ router.get("/get-employees", async (req, res, next) => {
     });
 });
 
-router.delete("/delete-user/:id", async (req, res, next) => {
+router.delete("/delete-user/:id", routeGuardAdmin, async (req, res, next) => {
   const user_id = req.params.id;
   if (!user_id) {
     res.json({});
