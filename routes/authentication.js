@@ -10,6 +10,16 @@ const routeGuardAdmin = require("./../middleware/route-guard-for-admin");
 const crypto = require("crypto");
 //import crypto from 'crypto'; -> Parsing error: 'import' and 'export' may appear only with 'sourceType: module'
 
+//NODEMAILER SET UP
+const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: `${process.env.EMAIL_ADDRESS}`,
+            pass: `${process.env.EMAIL_PASSWORD}`,
+          },
+        });
+let mailOptions = "";
+
 //SIGN-UP A NEW USER
 router.post("/sign-up", (req, res, next) => {
   const { name, username, email, password, role } = req.body;
@@ -137,15 +147,8 @@ router.post("/password-recovery", (req, res, next) => {
         user.resetPasswordToken = token;
         user.save();
 
-        const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: `${process.env.EMAIL_ADDRESS}`,
-            pass: `${process.env.EMAIL_PASSWORD}`,
-          },
-        });
 
-        const mailOptions = {
+        mailOptions = {
           from: "tabacariarossioteste@gmail.com",
           to: `${user.email}`,
           subject: "Link para Reset de Password",
@@ -261,8 +264,8 @@ router.post("/updatePassword", routeGuard, (req, res, next) => {
     });
 });
 
+//GET ALL EMPLOYEES
 router.get("/get-employees", routeGuardAdmin, async (req, res, next) => {
-  const userId = req.session.user;
   User.find({ role: "employee" })
     .then((users) => {
       res.json({ users });
@@ -272,14 +275,35 @@ router.get("/get-employees", routeGuardAdmin, async (req, res, next) => {
     });
 });
 
-router.delete("/delete-user/:id", routeGuardAdmin, async (req, res, next) => {
+//DELETE USER
+router.delete("/delete-user/:id", routeGuard, async (req, res, next) => {
   const user_id = req.params.id;
   if (!user_id) {
     res.json({});
   } else {
     try {
-      await User.findByIdAndDelete(user_id);
-      res.json({});
+      await User.findByIdAndDelete(user_id)
+      .then(user => {
+        mailOptions = {
+          from: "tabacariarossioteste@gmail.com",
+          to: `${user.email}`,
+          subject: "Confirmação de eliminação de conta.",
+          text: `Boa tarde ${user.name}, \n
+        Confirmamos que a sua conta eliminada da nossa base de dados a partir deste momento. \n \n
+        Esperamos que nos volte a visitar brevemente. \n
+        Cumprimentos, \n
+        A Equipa \n
+        Tabacaria Rossio`,
+        };
+
+        transporter.sendMail(mailOptions, (err, response) => {
+          if (err) {
+            console.log("there was an error", err);
+          } else {
+            res.status(200).json("User deleted from database.");
+          }
+        });
+      })
     } catch (error) {
       next(error);
     }

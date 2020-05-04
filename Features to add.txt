@@ -1,7 +1,7 @@
 Next:
 UPLOAD FATURA.RECIBO - done
 GESTAO DE ENCOMENDAS - done
-GESTAO DE UTILIZADORES
+GESTAO DE UTILIZADORES - done
 REDUZIR STOCK QUANDO SE LANÇA UMA ENCOMENDA E AUMENTAR QUANDO SE CANCELA - done
 ENVIAR EMAIL QUANDO SE ALTERA O ESTADO DE ENCOMENDA - done
 COOKIE NO CARRINHO DE COMPRAS - no need 
@@ -10,7 +10,7 @@ COOKIE NO CARRINHO DE COMPRAS - no need
 
 AUTHENTICATION
 
-- Email confirmation prior registration 
+- Email confirmation prior registration - not now
 - Password recovery - done
 - Edit/Add address - done
 
@@ -19,11 +19,11 @@ USER
 
 - Search products on search-bar - done
 - Only show products available -  done
-- order products by price
-- filter products by type, brand?
+- order products by price -done
+- filter products by type, brand? -done
 - Check previous orders - done
-- Save Favorites
-- Send email when product on stock
+- Save Favorites -not now
+- Send email when product on stock - not now
 - Possible chat? - not now
 - Order Basket - done
 - Payment: credit card/ bank transfer/ multibanco -stripe, reduniq
@@ -41,7 +41,20 @@ Admin & Employee
 - Manage orders (pending, sent, invoice sent, completed) - done
 
 Admin
-- Add/Remove employee users or change their password.
+- Add/Remove employee users or change their password. - done
+
+NEXT
+- quando user elimina conta, o populate da encomenda bloqueia e já nao da para aceder aos detalhes.
+
+- adicionar um parametro em user quando ele aceita, ou não, receber comunicações.
+
+- tentar adicionar stripe?
+
+- investigar pagamento com multibanco/mbway
+
+- FAZER DEPLOY 
+
+- ESTILIZAR
 
 
 THINGS TO CHANGE WHEN DEPLOYING
