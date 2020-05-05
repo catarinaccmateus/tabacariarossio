@@ -49,6 +49,10 @@ const schema = new mongoose.Schema({
       default: "Portugal"
     }
   },
+  commercial_agreement:{
+    type: Boolean,
+    default: "false"
+  },
   role: {
     type: String,
     enum: ["user", "admin", "employee"],

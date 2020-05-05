@@ -42,7 +42,6 @@ router.post("/create-order", routeGuard, (req, res, next) => {
     total,
   })
     .then((order) => {
-      console.log("order created", order);
       for (let product of basket) {
         const id = product._id;
         Product.findByIdAndUpdate(
@@ -53,13 +52,12 @@ router.post("/create-order", routeGuard, (req, res, next) => {
               console.log("product not updated", err);
               res.send(err);
             } else {
-              console.log("product updated", result);
-              const user = order.user_id;
-              mailOptions = {
-                from: "tabacariarossioteste@gmail.com",
-                to: `${user.email}`,
-                subject: "Confiração de encomenda",
-                text: `Boa tarde ${user.name}, \n \n 
+              mailOptions = [
+                {
+                  from: "tabacariarossioteste@gmail.com",
+                  to: `${user.email}`,
+                  subject: "Confirmação de encomenda",
+                  text: `Boa tarde ${user.name}, \n \n 
                  Confirmamos a receção da encomenda com o código ${order._id} \n
                  O valor total é de ${order.total}.
                   Poderá consultar os detalhes da encomenda em  http://localhost:3000/my-orders/${order._id}. \n
@@ -68,18 +66,44 @@ router.post("/create-order", routeGuard, (req, res, next) => {
                  Cumprimentos, \n
                  A Equipa \n
                  Tabacaria Rossio`,
-              };
-
-              transporter.sendMail(mailOptions, (err, response) => {
-                if (err) {
-                  console.log(
-                    "there was an error sending an email with the order",
-                    err
-                  );
-                } else {
-                  console.log("email with order sent");
-                  res.status(200).json("Recovery email sent.");
-                }
+                },
+                {
+                  from: "tabacariarossioteste@gmail.com",
+                  to: `tabacariarossioteste@gmail.com`,
+                  subject: "Pedido de encomenda",
+                  text: `Boa tarde, \n \n 
+                  Recebeu um novo pedido de encomenda.
+                  Nome do cliente:
+                  ${user.name} ${user.surname}
+ 
+                  Contacto telefónico: ${user.phoneNumber}
+                  E-mail: ${user.email}
+            
+              Morada de entrega:
+              ${user.address.line1} ${user.address.line2} ${user.address.city}
+              ${user.address.zipcode} ${user.address.country}
+       
+              Morada de faturação: ${user.taxAddress.line1}
+              ${user.taxAddress.line2} ${user.taxAddress.city}
+              ${user.taxAddress.zipcode} ${user.taxAddress.country}
+    
+                 Cumprimentos, \n
+                 A Equipa \n
+                 Tabacaria Rossio`,
+                },
+              ];
+              mailOptions.forEach((mailOption) => {
+                transporter.sendMail(mailOption, (err, response) => {
+                  if (err) {
+                    console.log(
+                      "there was an error sending an email with the order",
+                      err
+                    );
+                  } else {
+                    console.log("email with order sent");
+                    // res.status(200).json("Recovery email sent.");
+                  }
+                });
               });
               res.json(order);
             }
@@ -135,7 +159,8 @@ router.get("/get-all-orders", routeGuardAdminAndEmployee, (req, res, next) => {
 
 //UPLOADING AN INVOICE TO AN ORDER
 router.post(
-  "/uploadInvoice/:order_id", routeGuardAdminAndEmployee,
+  "/uploadInvoice/:order_id",
+  routeGuardAdminAndEmployee,
   upload.single("file"),
   (req, res, next) => {
     const orderId = req.params.order_id;
@@ -197,143 +222,129 @@ router.post(
 );
 
 //DELETING THE INVOICE TO AN ORDER
-router.post("/deleteInvoice/:order_id", routeGuardAdminAndEmployee, (req, res, next) => {
-  const orderId = req.params.order_id;
-  const { key } = req.body;
-  Order.findByIdAndUpdate(
-    orderId,
-    { $pull: { invoice_files: { s3_key: key } }, invoice: "not issued" },
-    (err, result) => {
-      if (err) {
-        return next(err);
-      }
-      let params = {
-        Bucket: process.env.AWS_API_BUCKET_NAME,
-        Key: key,
-      };
-
-      s3bucket.deleteObject(params, (err, data) => {
+router.post(
+  "/deleteInvoice/:order_id",
+  routeGuardAdminAndEmployee,
+  (req, res, next) => {
+    const orderId = req.params.order_id;
+    const { key } = req.body;
+    Order.findByIdAndUpdate(
+      orderId,
+      { $pull: { invoice_files: { s3_key: key } }, invoice: "not issued" },
+      (err, result) => {
         if (err) {
-          console.log(err);
-        } else {
-          res.send({
-            status: "200",
-            responseType: "string",
-            response: "success",
-          });
+          return next(err);
         }
-      });
-    }
-  );
+        let params = {
+          Bucket: process.env.AWS_API_BUCKET_NAME,
+          Key: key,
+        };
 
-  /*)
-  DOCUMENT.findByIdAndRemove(req.params.id, (err, result) => {
-   
-    //Now Delete the file from AWS-S3
-    // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#deleteObject-property
-    let s3bucket = new AWS.S3({
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      region: process.env.AWS_REGION
-    });
-
-    let params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: result.s3_key
-    };
-
-    s3bucket.deleteObject(params, (err, data) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send({
-          status: "200",
-          responseType: "string",
-          response: "success"
+        s3bucket.deleteObject(params, (err, data) => {
+          if (err) {
+            console.log(err);
+          } else {
+            res.send({
+              status: "200",
+              responseType: "string",
+              response: "success",
+            });
+          }
         });
       }
-    });
-  });*/
-});
+    );
+  }
+);
 
-//UPDATING ORDER STATUS 
-router.post("/update-order/:order_id", routeGuardAdminAndEmployee, (req, res, next) => {
-  const { key, value } = req.body.data;
-  const orderId = req.params.order_id;
-  Order.findByIdAndUpdate(orderId, { [key]: value })
-    .populate("user_id")
-    .then((order) => {
-      const user = order.user_id;
+//UPDATING ORDER STATUS
+router.post(
+  "/update-order/:order_id",
+  routeGuardAdminAndEmployee,
+  (req, res, next) => {
+    const { key, value } = req.body.data;
+    const orderId = req.params.order_id;
+    Order.findByIdAndUpdate(orderId, { [key]: value })
+      .populate("user_id")
+      .then((order) => {
+        const user = order.user_id;
 
-      //IF ORDER IS CANCELED, ADD PRODUCTS TO STOCK.
-      if (value === "canceled") {
-        console.log('value is canceled');
-        for (let product of order.products_basket) {
-          const id = product._id;
-          Product.findByIdAndUpdate(
-            id,
-            { $inc: { available_quantity: product.order_quantity } },
-            (err, result) => {
-              if (err) {
-                console.log('not possible to change quantity of product', err)
-              } else {
-                console.log('product quantity changed')
+        //IF ORDER IS CANCELED, ADD PRODUCTS TO STOCK.
+        if (value === "canceled") {
+          console.log("value is canceled");
+          for (let product of order.products_basket) {
+            const id = product._id;
+            Product.findByIdAndUpdate(
+              id,
+              { $inc: { available_quantity: product.order_quantity } },
+              (err, result) => {
+                if (err) {
+                  console.log(
+                    "not possible to change quantity of product",
+                    err
+                  );
+                } else {
+                  console.log("product quantity changed");
+                }
               }
-            }
-          );
+            );
+          }
         }
-      }
 
-      mailOptions = {
-        from: "tabacariarossioteste@gmail.com",
-        to: `${user.email}`,
-        subject: "Alteração do estado de encomenda",
-        text: `Boa tarde ${user.name}, \n \n 
+        mailOptions = {
+          from: "tabacariarossioteste@gmail.com",
+          to: `${user.email}`,
+          subject: "Alteração do estado de encomenda",
+          text: `Boa tarde ${user.name}, \n \n 
         Confirmamos que o estado da encomenda com o código ${order._id} foi alterado para ${value}. \n
         Poderá consultar os detalhes da encomenda em  http://localhost:3000/my-orders/${order._id}. \n
         Cumprimentos, \n
         A Equipa \n
         Tabacaria Rossio`,
-      };
+        };
 
-      transporter.sendMail(mailOptions, (err, response) => {
-        if (err) {
-          console.log("there was an error", err);
-        } else {
-          res.status(200).json("Recovery email sent.");
-        }
+        transporter.sendMail(mailOptions, (err, response) => {
+          if (err) {
+            console.log("there was an error", err);
+          } else {
+            res.status(200).json("Recovery email sent.");
+          }
+        });
+      })
+      .catch((err) => {
+        console.log("ERROR", err);
+        res.json(err);
       });
-    })
-    .catch((err) => {
-      console.log("ERROR", err);
-      res.json(err);
-    });
-});
+  }
+);
 
 //ADDING COMMENTS TO AN ORDER
-router.post("/add-comment-order/:order_id", routeGuardAdminAndEmployee, (req, res, next) => {
-  const { text, user } = req.body.data;
-  console.log(req.body);
-  const orderId = req.params.order_id;
-  Order.findByIdAndUpdate(
-    orderId,
-    {
-      $push: {
-        comments: {
-          text,
-          user,
-          creationDate: new Date(),
+router.post(
+  "/add-comment-order/:order_id",
+  routeGuardAdminAndEmployee,
+  (req, res, next) => {
+    const { text, user } = req.body.data;
+    console.log(req.body);
+    const orderId = req.params.order_id;
+    Order.findByIdAndUpdate(
+      orderId,
+      {
+        $push: {
+          comments: {
+            text,
+            user,
+            creationDate: new Date(),
+          },
         },
       },
-    },
-    (err, result) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.send("Comment added");
+      (err, result) => {
+        if (err) {
+          res.send(err);
+        } else {
+          res.send("Comment added");
+        }
       }
-    }
-  );
-});
+    );
+  }
+);
 
 module.exports = router;

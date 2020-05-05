@@ -22,7 +22,7 @@ let mailOptions = "";
 
 //SIGN-UP A NEW USER
 router.post("/sign-up", (req, res, next) => {
-  const { name, username, email, password, role } = req.body;
+  const { name, username, email, password, role, commercial_agreement } = req.body;
   bcryptjs
     .hash(password, 10)
     .then((hash) => {
@@ -31,6 +31,7 @@ router.post("/sign-up", (req, res, next) => {
         username,
         email,
         role,
+        commercial_agreement,
         passwordHash: hash,
       });
     })

@@ -46,14 +46,14 @@ app.use(
     resave: true,
     saveUninitialized: false,
     cookie: {
-      maxAge: 60 * 60 * 24 * 15,
+      maxAge: 1000 * 60 * 60 * 4, //equivalent to 4 hours
       sameSite: "lax",
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
     },
     store: new (connectMongo(expressSession))({
       mongooseConnection: mongoose.connection,
-      ttl: 60 * 60 * 24,
+      ttl: 60 * 60 * 24, // Keeps session open for 1 day
     }),
   })
 );
