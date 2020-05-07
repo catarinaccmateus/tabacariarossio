@@ -56,8 +56,10 @@ router.post("/sign-up", (req, res, next) => {
 router.post("/sign-in", (req, res, next) => {
   let userId;
   const { email, password } = req.body;
+  console.log(req.body);
   User.findOne({ email })
-    .then((user) => {
+    .then(user => {
+      console.log(user);
       if (!user) {
         return Promise.reject(new Error("There's no user with that email."));
       } else {
@@ -65,15 +67,15 @@ router.post("/sign-in", (req, res, next) => {
         return bcryptjs.compare(password, user.passwordHash);
       }
     })
-    .then((result) => {
+    .then(result => {
       if (result) {
         req.session.user = userId;
-        res.redirect("/private");
+        res.redirect('/');
       } else {
-        return Promise.reject(new Error("Wrong password."));
+        return Promise.reject(new Error('Wrong password.'));
       }
     })
-    .catch((error) => {
+    .catch(error => {
       next(error);
     });
 });
@@ -111,8 +113,9 @@ router.post("/edit-user", routeGuard, (req, res, next) => {
     taxNumber,
     address,
     taxAddress,
+    commercial_agreement
   } = req.body;
-  const userId = req.session.user;
+    const userId = req.session.user;
   User.findByIdAndUpdate(userId, {
     name,
     surname,
@@ -121,6 +124,7 @@ router.post("/edit-user", routeGuard, (req, res, next) => {
     taxNumber,
     address,
     taxAddress,
+    commercial_agreement
   })
     .then((user) => {
       res.json({ user });
@@ -203,15 +207,18 @@ router.post("/reset", (req, res, next) => {
 //3. UPDATING PASSWORD VIA EMAIL
 router.post("/updatePasswordViaEmail", (req, res, next) => {
   const { email, password, resetPasswordToken } = req.body;
-
+  console.log('in req.body', req.body)
   User.findOne({ email: email, resetPasswordToken: resetPasswordToken })
     .then((user) => {
       if (user !== null) {
         bcryptjs.hash(password, 10).then((hash) => {
-          user.password = hash;
+          console.log('user', user.passwordHash);
+          console.log('new hash', hash);
+          user.passwordHash = hash;
           user.resetPasswordToken = null;
           user.resetPasswordExpires = null;
           user.save();
+          console.log('updated', user.passwordHash);
           res.status(200).send({ message: "Password updated" });
         });
       } else {
