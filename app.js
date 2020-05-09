@@ -9,7 +9,7 @@ const expressSession = require("express-session");
 const logger = require("morgan");
 const mongoose = require("mongoose");
 const sassMiddleware = require("node-sass-middleware");
-const serveFavicon = require("serve-favicon");
+//const serveFavicon = require("serve-favicon");
 const basicAuthenticationDeserializer = require("./middleware/basic-authentication-deserializer.js");
 const bindUserToViewLocals = require("./middleware/bind-user-to-view-locals.js");
 const indexRouter = require("./routes/index");
@@ -22,7 +22,7 @@ const app = express();
 app.set("views", join(__dirname, "views"));
 app.set("view engine", "hbs");
 
-app.use(serveFavicon(join(__dirname, "public/images", "favicon.ico")));
+//app.use(serveFavicon(join(__dirname, "public/images", "favicon.ico")));
 app.use(
   sassMiddleware({
     src: join(__dirname, "public"),
