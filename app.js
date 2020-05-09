@@ -33,7 +33,9 @@ app.use(
     sourceMap: true,
   })
 );
-app.use(express.static(join(__dirname, "public")));
+//app.use(express.static(join(__dirname, "public")));
+app.use(express.static(join(__dirname, 'client/build')));
+
 app.use(logger("dev"));
 
 //app.use(express.urlencoded({ extended: true }));
@@ -49,7 +51,7 @@ app.use(
       maxAge: 1000 * 60 * 60 * 4, //equivalent to 4 hours
       sameSite: "lax",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      //secure: process.env.NODE_ENV === "production", 
     },
     store: new (connectMongo(expressSession))({
       mongooseConnection: mongoose.connection,
@@ -63,7 +65,8 @@ app.use(bindUserToViewLocals);
 app.use("/api/authentication", authenticationRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/orders", ordersRouter);
-app.use("/", indexRouter);
+app.get("*", (req,res,next)=>{ res.sendFile(join(__dirname, 'client/build/index.html'))});
+
 
 // Catch missing routes and forward to error handler
 app.use((req, res, next) => {
