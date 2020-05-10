@@ -12,18 +12,17 @@ const crypto = require("crypto");
 
 //NODEMAILER SET UP
 const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: `${process.env.EMAIL_ADDRESS}`,
-            pass: `${process.env.EMAIL_PASSWORD}`,
-          },
-        });
+  service: "gmail",
+  auth: {
+    user: `${process.env.EMAIL_ADDRESS}`,
+    pass: `${process.env.EMAIL_PASSWORD}`,
+  },
+});
 let mailOptions = "";
 
 //SIGN-UP A NEW USER
 router.post("/sign-up", (req, res, next) => {
-  const { name, username, email, password, commercial_agreement } = req.body;
-  const role = "admin";
+  const { name, username, email, password, role, commercial_agreement } = req.body;
   bcryptjs
     .hash(password, 10)
     .then((hash) => {
@@ -59,7 +58,7 @@ router.post("/sign-in", (req, res, next) => {
   const { email, password } = req.body;
   console.log(req.body);
   User.findOne({ email })
-    .then(user => {
+    .then((user) => {
       console.log(user);
       if (!user) {
         return Promise.reject(new Error("There's no user with that email."));
@@ -68,15 +67,15 @@ router.post("/sign-in", (req, res, next) => {
         return bcryptjs.compare(password, user.passwordHash);
       }
     })
-    .then(result => {
+    .then((result) => {
       if (result) {
         req.session.user = userId;
-        res.redirect('/');
+        res.redirect("/");
       } else {
-        return Promise.reject(new Error('Wrong password.'));
+        return Promise.reject(new Error("Wrong password."));
       }
     })
-    .catch(error => {
+    .catch((error) => {
       next(error);
     });
 });
@@ -84,7 +83,7 @@ router.post("/sign-in", (req, res, next) => {
 //SIGN-OUR ONE USER
 router.post("/sign-out", (req, res, next) => {
   req.session.destroy();
-  res.redirect("/");
+  res.json({response: 'Session destroyed'})
 });
 
 //GET INFO ABOUT THE USER THAS IS LOGGED IN
@@ -99,6 +98,7 @@ router.get("/user-information", routeGuard, async (req, res, next) => {
       if (!user) throw new Error("Signed in user not found");
       res.json({ user });
     } catch (error) {
+      res.json({});
       next(error);
     }
   }
@@ -114,9 +114,9 @@ router.post("/edit-user", routeGuard, (req, res, next) => {
     taxNumber,
     address,
     taxAddress,
-    commercial_agreement
+    commercial_agreement,
   } = req.body;
-    const userId = req.session.user;
+  const userId = req.session.user;
   User.findByIdAndUpdate(userId, {
     name,
     surname,
@@ -125,7 +125,7 @@ router.post("/edit-user", routeGuard, (req, res, next) => {
     taxNumber,
     address,
     taxAddress,
-    commercial_agreement
+    commercial_agreement,
   })
     .then((user) => {
       res.json({ user });
@@ -152,7 +152,6 @@ router.post("/password-recovery", (req, res, next) => {
         user.resetPasswordExpires = Date.now() + 3600000;
         user.resetPasswordToken = token;
         user.save();
-
 
         mailOptions = {
           from: "tabacariarossioteste@gmail.com",
@@ -208,18 +207,18 @@ router.post("/reset", (req, res, next) => {
 //3. UPDATING PASSWORD VIA EMAIL
 router.post("/updatePasswordViaEmail", (req, res, next) => {
   const { email, password, resetPasswordToken } = req.body;
-  console.log('in req.body', req.body)
+  console.log("in req.body", req.body);
   User.findOne({ email: email, resetPasswordToken: resetPasswordToken })
     .then((user) => {
       if (user !== null) {
         bcryptjs.hash(password, 10).then((hash) => {
-          console.log('user', user.passwordHash);
-          console.log('new hash', hash);
+          console.log("user", user.passwordHash);
+          console.log("new hash", hash);
           user.passwordHash = hash;
           user.resetPasswordToken = null;
           user.resetPasswordExpires = null;
           user.save();
-          console.log('updated', user.passwordHash);
+          console.log("updated", user.passwordHash);
           res.status(200).send({ message: "Password updated" });
         });
       } else {
@@ -291,8 +290,7 @@ router.delete("/delete-user/:id", routeGuard, async (req, res, next) => {
     res.json({});
   } else {
     try {
-      await User.findByIdAndDelete(user_id)
-      .then(user => {
+      await User.findByIdAndDelete(user_id).then((user) => {
         mailOptions = {
           from: "tabacariarossioteste@gmail.com",
           to: `${user.email}`,
@@ -312,7 +310,7 @@ router.delete("/delete-user/:id", routeGuard, async (req, res, next) => {
             res.status(200).json("User deleted from database.");
           }
         });
-      })
+      });
     } catch (error) {
       next(error);
     }

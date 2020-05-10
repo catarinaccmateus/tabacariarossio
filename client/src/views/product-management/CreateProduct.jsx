@@ -12,7 +12,7 @@ export default class CreateProduct extends Component {
       barCode: "",
       internalCode: "",
       description: "",
-      type: "",
+      type: "watch",
       available_quantity: 1,
     };
     this.handleSubmission = this.handleSubmission.bind(this);
@@ -50,22 +50,24 @@ export default class CreateProduct extends Component {
 
   render() {
     return (
-      <div className="main-container center-container">
+      <div className="main-container center-container m-3">
         <form
           onSubmit={this.handleSubmission}
-          className="form"
+          className="form d-flex flex-column"
           encType="multipart/form-data"
         >
-          <h3>Adicionar Artigo</h3>
+          <h3 className="color-bege">Adicionar Artigo</h3>
           <label htmlFor="brand">Marca</label>
           <input
             type="text"
             name="brand"
             value={this.state.brand}
             onChange={this.handleInputChange}
+            className="form-control"
           />
           <label htmlFor="model">Modelo</label>
           <input
+            className="form-control"
             type="text"
             name="model"
             value={this.state.model}
@@ -73,6 +75,7 @@ export default class CreateProduct extends Component {
           />
           <label htmlFor="price">Preço</label>
           <input
+            className="form-control"
             type="number"
             name="price"
             value={this.state.price}
@@ -82,6 +85,7 @@ export default class CreateProduct extends Component {
           />
           <label htmlFor="description">Descrição</label>
           <input
+            className="form-control"
             type="text"
             name="description"
             value={this.state.description}
@@ -89,6 +93,7 @@ export default class CreateProduct extends Component {
           />
           <label htmlFor="barCode">Código de barras</label>
           <input
+            className="form-control"
             type="text"
             name="barCode"
             value={this.state.barCode}
@@ -96,6 +101,7 @@ export default class CreateProduct extends Component {
           />
           <label htmlFor="internalCode">Código interno</label>
           <input
+            className="form-control"
             type="text"
             name="internalCode"
             value={this.state.internalCode}
@@ -106,7 +112,7 @@ export default class CreateProduct extends Component {
             name="type"
             value={this.state.type}
             onChange={this.handleInputChange}
-            className="my-2"
+            className="my-2 form-control"
           >
             <option value="watch">Relógio</option>
             <option value="pen">Caneta</option>
@@ -121,16 +127,17 @@ export default class CreateProduct extends Component {
             value={this.state.available_quantity}
             onChange={this.handleInputChange}
             min="0"
+            className="form-control"
           />
-          <br />
           <input
             type="file"
             onChange={this.handleImageChange}
             name="images"
             multiple
             accept="image/*"
+            className="form-control my-1"
           />
-          <button>Adicionar</button>
+          <button className="standard-button">Adicionar</button>
         </form>
       </div>
     );

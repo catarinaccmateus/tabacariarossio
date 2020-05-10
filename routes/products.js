@@ -22,7 +22,7 @@ router.post("/create", routeGuardAdminAndEmployee, uploader.array("image", 5), a
     description,
     available_quantity,
   } = req.body;
-
+  console.log(req.body, "req.body");
   let imageUrls = [];
   for (let i = 0; i < req.files.length; i++) {
     imageUrls.push(req.files[i].url);
