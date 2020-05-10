@@ -5,7 +5,8 @@ const mongoose = require("mongoose");
 const schema = new mongoose.Schema({
   type: {
     enum: ["watch", "pen", "shaver", "lighter", "other"],
-    type: String
+    type: String,
+    default: "watch"
   },
   model: String,
   brand: String,

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { ProductInfo as ProductInfoService } from "./../../services/product-management";
 import { Delete as DeleteService } from "./../../services/product-management";
+import "./IndividualProduct.css";
 
 export class IndividualProduct extends Component {
   constructor() {
@@ -82,25 +83,31 @@ export class IndividualProduct extends Component {
     let index = this.state.indexOfImage;
     const user = this.props.user;
     return (
-      <div className="main-container center-container d-flex flex-column">
-        <h3>Artigo seleccionado</h3>
+      <div className="main-container d-flex flex-column m-3">
+        <h3 className="color-bege">Artigo seleccionado</h3>
         {this.state.loaded ? (
-          <div className="form">
+          <div className="form d-flex flex-row flex-wrap justify-content-around align-items-center m-2">
+          <div className="half-width">
+          <div className="d-flex flex-row justify-content-between">
+          {
+            this.state.indexOfImage > 0 ? 
+           <button onClick={this.passToPreviousImage} className="btn">Imagem anterior</button> :
+           <div></div>
+           }
+          {
+            this.state.numberOfImages > 1 && this.state.indexOfImage < this.state.numberOfImages - 1 ? 
+           <button onClick={this.passToNextImage} className="btn">Próxima imagem</button> :
+           <div></div>
+           }
+           </div>
             <img
               src={this.state.product.image[index]}
               alt={this.state.product.model}
-              style={{ width: "200px" }}
+              style={{ width: "100%", height: "auto" }}
+              className="styled-images"
             />
-           {
-            this.state.numberOfImages > 1 && this.state.indexOfImage < this.state.numberOfImages - 1 ? 
-           <button onClick={this.passToNextImage}>Próxima imagem</button> :
-           <div></div>
-           }
-           {
-            this.state.indexOfImage > 0 ? 
-           <button onClick={this.passToPreviousImage}>Imagem anterior</button> :
-           <div></div>
-           }
+           </div>
+           <div className="half-width d-flex flex-column justify-content-center align-items-center">
             <h3>{this.state.product.model}</h3>
             <h4>{this.state.product.brand}</h4>
             <p>{this.state.product.description}</p>
@@ -108,22 +115,23 @@ export class IndividualProduct extends Component {
             {this.state.product.available_quantity > 0 ? (
               <button
                 onClick={this.addItemToBasket}
-                className="btn text-light bg-success"
+                className="standard-button"
               >
                 Adicionar ao carrinho
               </button>
             ) : (
-              <div>Artigo temporariamente esgotado.</div>
+              <div className="font-italic">Artigo temporariamente esgotado.</div>
             )}
-            {user && (user.role === "admin" || user.role === "employee") &&
+            </div>
+          </div>
+        ) : (
+          <div className="text-center color-dark"> Procurando o artigo para si... </div>
+        )}
+        {user && (user.role === "admin" || user.role === "employee") &&
             <button onClick={this.deleteItem} className="btn text-danger">
               Eliminar artigo
             </button>
             }
-          </div>
-        ) : (
-          <div> Procurando o artigo para si... </div>
-        )}
         <button
           className="btn text-primary"
           onClick={this.props.history.goBack}
