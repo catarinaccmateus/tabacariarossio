@@ -1,0 +1,14 @@
+.footer {
+  background-color: var(--headers-color);
+  min-height: 100px;
+}
+
+.responsive-size {
+  width: 20%;
+}
+
+@media only screen and (max-width: 800px) {
+  .responsive-size {
+    width: 60%;
+  }
+}

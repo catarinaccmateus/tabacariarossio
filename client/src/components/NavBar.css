@@ -1,0 +1,14 @@
+.navbar-toggler.toggler-example {
+  cursor: pointer;
+}
+
+
+#navbar {
+  background-color: var(--background-color);
+}
+
+#nav-brand {
+  color: var(--headers-color);
+}
+
+

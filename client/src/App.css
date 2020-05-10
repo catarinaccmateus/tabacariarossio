@@ -1,0 +1,65 @@
+:root {
+  --headers-color: #a69374;
+  --background-color: #362c2c;
+  --light-background: #c7c3c3;
+}
+
+.app {
+  margin: 0em;
+  min-height: 100%;
+  width: 100%;
+}
+
+.appBody {
+  min-height: 100vh;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.standard-button {
+  background-color: var(--background-color);
+  color: white;
+  border: 3px solid var(--headers-color);
+  padding: 0.7em;
+  margin: 1.2em;
+  border-radius: 15px;
+}
+
+.main-container {
+  height: 100vh;
+}
+
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+
+.background-color-dark {
+  background-color: var(--background-color);
+}
+
+.background-color-bege {
+  background-color: var(--headers-color) !important;
+}
+
+.background-color-light {
+  background-color: var(--light-background) !important;
+}
+
+.color-dark {
+  color: var(--background-color);
+}
+
+.color-bege {
+  color: var(--headers-color);
+}
+
+.color-light {
+  color: var(--light-background);
+}

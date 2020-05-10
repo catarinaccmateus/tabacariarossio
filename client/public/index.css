@@ -1,0 +1,8 @@
+#root {
+  overflow-x: hidden;
+  height: 100vh;
+}
+
+body {
+  min-height: 100%
+}
