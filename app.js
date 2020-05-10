@@ -15,15 +15,19 @@ const bindUserToViewLocals = require("./middleware/bind-user-to-view-locals.js")
 const indexRouter = require("./routes/index");
 const authenticationRouter = require("./routes/authentication");
 const productsRouter = require("./routes/products");
-const ordersRouter = require('./routes/orders');
+const ordersRouter = require("./routes/orders");
 
 const app = express();
+
+//app.use(express.static(join(__dirname, "public")));
+app.use(express.static(join(__dirname, "client/build")));
+app.use(logger("dev"));
 
 app.set("views", join(__dirname, "views"));
 app.set("view engine", "hbs");
 
 //app.use(serveFavicon(join(__dirname, "public/images", "favicon.ico")));
-app.use(
+/*app.use(
   sassMiddleware({
     src: join(__dirname, "public"),
     dest: join(__dirname, "public"),
@@ -32,11 +36,7 @@ app.use(
     force: process.env.NODE_ENV === "development",
     sourceMap: true,
   })
-);
-//app.use(express.static(join(__dirname, "public")));
-app.use(express.static(join(__dirname, 'client/build')));
-
-app.use(logger("dev"));
+);*/
 
 //app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -51,7 +51,7 @@ app.use(
       maxAge: 1000 * 60 * 60 * 4, //equivalent to 4 hours
       sameSite: "lax",
       httpOnly: true,
-      //secure: process.env.NODE_ENV === "production", 
+      //secure: process.env.NODE_ENV === "production",
     },
     store: new (connectMongo(expressSession))({
       mongooseConnection: mongoose.connection,
@@ -65,8 +65,9 @@ app.use(bindUserToViewLocals);
 app.use("/api/authentication", authenticationRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/orders", ordersRouter);
-app.get("*", (req,res,next)=>{ res.sendFile(join(__dirname, 'client/build/index.html'))});
-
+app.get("*", (req, res, next) => {
+  res.sendFile(join(__dirname, "client/build/index.html"));
+});
 
 // Catch missing routes and forward to error handler
 app.use((req, res, next) => {
@@ -80,7 +81,8 @@ app.use((error, req, res, next) => {
   res.locals.error = req.app.get("env") === "development" ? error : {};
 
   res.status(error.status || 500);
-  res.render("error");
+  res.json({ type: "error", error: { message: error.message } });
+  //res.render("error");
 });
 
 module.exports = app;
