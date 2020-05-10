@@ -131,13 +131,13 @@ export default class Basket extends Component {
           </div>
         )}
         {!productsInBasket.length ? (
-          <div>
+          <div className="d-flex flex-column align-items-around my-5">
           <h2>
             Ups! </h2>
             <p>O seu carrinho está vazio. <br />
-            <Link to="/store">Espreite a nossa loja.</Link>
             </p>
-            <img src={BasketLogo} alt="shopping-cart"  className="shopping-cart img-fluid"/>
+            <img src={BasketLogo} alt="shopping-cart"  className="shopping-cart img-fluid m-5"/>
+            <Link to="/store" className="standard-button m-5">Espreite a nossa loja.</Link>
           </div>
         ) : (
           <Link to="Store">Voltar à loja</Link>

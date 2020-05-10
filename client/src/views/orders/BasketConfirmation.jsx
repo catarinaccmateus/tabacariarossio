@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import BasketLogo from "./../../public/images/logos/shopping cart brown.png";
 import "./Basket.css";
+import SignInModal from "./../../components/SignIn";
+import SignUpModal from "./../../components/SignUp";
 
 function BasketConfirmation(props) {
+  const [signInModalOpen, setsignInModalOpen] = useState(false);
+  const [signUpModalOpen, setsignUpModalOpen] = useState(false);
+
   const user = props.user;
   const productsInBasket = props.productsInBasket;
   function areItemsInBasket() {
@@ -17,6 +22,14 @@ function BasketConfirmation(props) {
   let createOrder = async (e) => {
     e.preventDefault();
     props.history.push(`/payment-method`);
+  };
+
+  let handleSignInModalOpen = () => {
+    setsignInModalOpen(!signInModalOpen);
+  };
+
+  let handleSignUpModalOpen = () => {
+    setsignUpModalOpen(!signUpModalOpen);
   };
 
   return (
@@ -65,23 +78,50 @@ function BasketConfirmation(props) {
               </div>
             </div>
           ) : (
-            <div className="text-center">
-          <h2>
-            Ups! </h2>
-            <p>O seu carrinho está vazio. <br />
-            <Link to="/store">Espreite a nossa loja.</Link>
-            </p>
-            <img src={BasketLogo} alt="shopping-cart"  className="shopping-cart img-fluid"/>
-          </div>
+            <div className="d-flex flex-column align-items-around my-5">
+              <h2>Ups! </h2>
+              <p>
+                O seu carrinho está vazio. <br />
+              </p>
+              <img
+                src={BasketLogo}
+                alt="shopping-cart"
+                className="shopping-cart img-fluid m-5"
+              />
+              <Link to="/store" className="standard-button m-5">
+                Espreite a nossa loja.
+              </Link>
+            </div>
           )}
         </div>
       )}
 
       {!user && (
-        <h2>
-          <Link to={"/sign-in"}>Por favor, inicie sessão para continuar</Link>
-        </h2>
+        <div className="d-flex flex-column justify-content-center align-items-center">
+          <h1 className="m-4 text-center color-bege ">Quase lá!</h1>
+
+          <h2 className="text-center color-dark">
+            Por favor, <Link onClick={handleSignInModalOpen}>inicie sessão</Link> ou{" "}
+            <Link onClick={handleSignUpModalOpen}>
+              crie uma conta para
+            </Link>{" "}
+            continuar com a sua compra.
+          </h2>
+        </div>
       )}
+
+      <SignInModal
+        {...props}
+        modalOpen={signInModalOpen}
+        handleModalOpen={handleSignInModalOpen}
+        loadUserInformation={props.loadUserInformation}
+      />
+      <SignUpModal
+        {...props}
+        modalOpen={signUpModalOpen}
+        handleModalOpen={handleSignUpModalOpen}
+        loadUserInformation={props.loadUserInformation}
+      />
     </div>
   );
 }

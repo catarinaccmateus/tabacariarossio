@@ -255,6 +255,7 @@ class App extends Component {
                     user={this.state.user}
                     productsInBasket={this.state.arrayOfProducts}
                     totalPriceInBasket={this.state.totalPriceInBasket}
+                    loadUserInformation={this.loadUserInformation}
                   />
                 )}
               />
