@@ -26,8 +26,8 @@ export class MyOrders extends Component {
     const orders = this.state.orders;
     const isThereOrders = orders.length;
     return (
-      <div className="main-container">
-        <h2> As minhas encomendas</h2>
+      <div className="main-container m-3">
+        <h2 className="color-bege"> As minhas encomendas</h2>
         {isThereOrders > 0 ? (
           <div> 
           <p>Tenho {isThereOrders} encomenda/s. </p>

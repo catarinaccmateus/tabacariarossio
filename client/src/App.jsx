@@ -136,6 +136,7 @@ class App extends Component {
   }
 
   render() {
+    const loaded = this.state.loaded;
     return (
       <div className="app">
         <BrowserRouter>
@@ -144,7 +145,7 @@ class App extends Component {
             loadUserInformation={this.loadUserInformation}
           />
           <div className="appBody">
-            <Switch>
+            {loaded && <Switch>
               <RouteForAllLoggedIn
                 exact
                 redirect="/"
@@ -303,7 +304,7 @@ class App extends Component {
                 )}
               />
               */}
-            </Switch>
+            </Switch>}
           </div>
           <Footer />
         </BrowserRouter>

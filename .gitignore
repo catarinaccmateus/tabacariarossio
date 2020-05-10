@@ -39,3 +39,14 @@ node_modules
 .next
 
 # build
+client/build
+client/node_modules
+
+
+# dependencies
+client/.pnp
+client/.pnp.js
+
+# testing
+client/coverage
+

@@ -15,13 +15,14 @@ export default class DisplayProducts extends Component {
       type: "",
       search: "",
       price_order: "",
-      limitTo: 6
+      limitTo: 6,
     };
     this.handleChange = this.handleChange.bind(this);
     this.loadMore = this.loadMore.bind(this);
   }
 
   async componentDidMount() {
+    window.scrollTo(0, 0);
     this._isMounted = true;
     const products = await getAllProductsService();
     if (this._isMounted) {
@@ -74,11 +75,11 @@ export default class DisplayProducts extends Component {
     });
   }
 
-  loadMore () {
+  loadMore() {
     this.setState({
-       limitTo: this.state.limitTo + 3
+      limitTo: this.state.limitTo + 3,
     });
- }
+  }
 
   render() {
     const products = this.state.filteredProducts.slice(0, this.state.limitTo);
@@ -139,17 +140,21 @@ export default class DisplayProducts extends Component {
                   src={squarePicture(product.image[0])}
                   alt={this.state.model}
                   className="card-img-top mx-auto m-1"
-                  style={{ maxWidth: "200px" }}
+                  style={{ maxWidth: "300px" }}
                 />
                 <div className="card-body d-flex flex-column justify-content-center align-items-center">
                   <h3 className="card-title">{product.model}</h3>
                   <h4 className="card-text">{product.brand}</h4>
                   <span className="card-text">{product.price / 100} €</span>
                   {!product.available_quantity && (
-                    <div className="font-italic">Produto temporariamente esgotado.</div>
+                    <div className="font-italic">
+                      Produto temporariamente esgotado.
+                    </div>
                   )}
                   {product.available_quantity > 0 && (
-                    <div className="text-success">Stock: {product.available_quantity} </div>
+                    <div className="text-success">
+                      Stock: {product.available_quantity}{" "}
+                    </div>
                   )}
                 </div>
                 <div className="card-footer background-color-light">
@@ -160,8 +165,11 @@ export default class DisplayProducts extends Component {
               </div>
             ))}
         </div>
-        {(this.state.limitTo < this.state.products.length) &&
-        <button onClick={this.loadMore} className="standard-button">Ver Mais</button>}
+        {this.state.limitTo < this.state.products.length && (
+          <button onClick={this.loadMore} className="standard-button">
+            Ver Mais
+          </button>
+        )}
       </div>
     );
   }

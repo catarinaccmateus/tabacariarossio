@@ -58,7 +58,14 @@ export default class Index extends Component {
                 <h3 className="color-bege">Telefone</h3>
                 <p className="text-light">(+351) 213 425 221</p>
               </div>
-              <div><a href="https://www.facebook.com/tabacariarossio.lisboa/" target="_blank"><img src={FacebookLogo} alt="Facebook"/></a></div>
+              <div>
+                <a
+                  href="https://www.facebook.com/tabacariarossio.lisboa/"
+                  target="_blank"
+                >
+                  <img src={FacebookLogo} alt="Facebook" />
+                </a>
+              </div>
             </div>
             <div className="map-google">
               <iframe
@@ -75,59 +82,100 @@ export default class Index extends Component {
           </div>
         </div>
 
-        <div className="m-5">
+        <div className="m-5" id="index-pictures">
           <div className="d-flex flex-wrap flex-row justify-content-around align-items-center">
-            <div className="content">
-            <div class="content-overlay"></div>
-              <img src={picture1} alt="" className="img-fluid content-image" />
-              <div class="content-details fadeIn-top">
-                <h3>ISQUEIROS</h3>
+            <Link to={"/store"}>
+              <div className="content">
+                <div class="content-overlay"></div>
+                <img
+                  src={picture1}
+                  alt=""
+                  className="img-fluid content-image"
+                />
+                <div class="content-details fadeIn-top">
+                  <h3>ISQUEIROS</h3>
+                </div>
               </div>
-            </div>
-            <div className="content">
-            <div class="content-overlay"></div>
-              <img src={picture2} alt="" className="img-fluid content-image" />
-              <div class="content-details fadeIn-top">
-                <h3>CANETAS</h3>
+            </Link>
+
+            <Link to={"/store"}>
+              <div className="content">
+                <div class="content-overlay"></div>
+                <img
+                  src={picture2}
+                  alt=""
+                  className="img-fluid content-image"
+                />
+                <div class="content-details fadeIn-top">
+                  <h3>CANETAS</h3>
+                </div>
               </div>
-            </div>
-            <div className="content">
-            <div class="content-overlay"></div>
-              <img src={picture3} alt="" className="img-fluid content-image" />
-              <div class="content-details fadeIn-top">
-                <h3>MÁQUINAS DE BARBEAR</h3>
+            </Link>
+
+            <Link to={"/store"}>
+              <div className="content">
+                <div class="content-overlay"></div>
+                <img
+                  src={picture3}
+                  alt=""
+                  className="img-fluid content-image"
+                />
+                <div class="content-details fadeIn-top">
+                  <h3>MÁQUINAS DE BARBEAR</h3>
+                </div>
               </div>
-            </div>
-            <div className="content">
-            <div class="content-overlay"></div>
-              <img src={picture4} alt="" className="img-fluid content-image" />
-              <div class="content-details fadeIn-top">
-                <h3>ACESSÓRIOS</h3>
+            </Link>
+
+            <Link to={"/store"}>
+              <div className="content">
+                <div class="content-overlay"></div>
+                <img
+                  src={picture4}
+                  alt=""
+                  className="img-fluid content-image"
+                />
+                <div class="content-details fadeIn-top">
+                  <h3>ACESSÓRIOS</h3>
+                </div>
               </div>
-            </div>
-            <div className="content">
-            <div class="content-overlay"></div>
-              <img src={picture5} alt="" className="img-fluid content-image" />
-              <div class="content-details fadeIn-top">
-                <h3>
-                  TACABACO NACIONAL E INTERNACIONAL. 
-                  <span className="font-italic font-weight-light text-lowercase d-inline-block">*Produtos de tabaco
-                  só estão disponíveis na nossa loja física.</span> 
-                </h3>
+            </Link>
+
+              <div className="content">
+                <div class="content-overlay"></div>
+                <img
+                  src={picture5}
+                  alt=""
+                  className="img-fluid content-image"
+                />
+                <div class="content-details fadeIn-top">
+                  <h3>
+                    TACABACO NACIONAL E INTERNACIONAL.
+                    <span className="font-italic font-weight-light text-lowercase d-inline-block">
+                      *Produtos de tabaco só estão disponíveis na nossa loja
+                      física.
+                    </span>
+                  </h3>
+                </div>
               </div>
-            </div>
+           
+            <Link to={"/store"}>
             <div className="content">
-            <div class="content-overlay"></div>
+              <div class="content-overlay"></div>
               <img src={picture6} alt="" className="img-fluid content-image" />
               <div class="content-details fadeIn-top">
                 <h3>RELÓGIOS</h3>
               </div>
             </div>
+            </Link>
           </div>
         </div>
 
         <div>
-          <img src={mainImage} alt="Tabacaria Rossio entrada" className="picture-road"/>
+          <img
+            src={mainImage}
+            alt="Tabacaria Rossio entrada"
+            className="picture-road"
+          />
         </div>
 
         <div className="div-index-logo">

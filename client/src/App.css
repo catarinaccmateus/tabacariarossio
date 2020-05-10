@@ -28,8 +28,17 @@ code {
   border-radius: 15px;
 }
 
+.standard-button:hover {
+  background-color: var(--headers-color); 
+  color: white;
+  border: 3px solid var(--background-color);
+  padding: 0.7em;
+  margin: 1.2em;
+  border-radius: 15px;
+}
+
 .main-container {
-  height: 100vh;
+  height: 100%;
 }
 
 .center-container {
@@ -62,4 +71,10 @@ code {
 
 .color-light {
   color: var(--light-background);
+}
+
+@media only screen and (min-width: 801px) {
+  .decrease-button-size-large-screen{
+    width: 10em;
+  }
 }

@@ -34,7 +34,6 @@
   .content-details h3 {
     font-size: 1em;
   }
-
 }
 
 @import url(https://fonts.googleapis.com/css?family=Raleway);
@@ -69,6 +68,7 @@
 
 .content-image {
   width: 100%;
+  height: auto;
 }
 
 .content-details {
@@ -119,4 +119,11 @@
 
 .fadeIn-right {
   left: 80%;
+}
+
+@media only screen and (min-width: 1800px) {
+  #index-pictures {
+    padding-right: 10%;
+    padding-left: 10%;
+  }
 }

@@ -70,7 +70,7 @@ class NavBar extends Component {
         >
           <Nav className="mr-auto">
             <Nav.Link as={Link} to={"/store"} className="nav-link text-light">
-              Loja
+             Visite a nossa Loja
             </Nav.Link>
 
             {user && (user.role === "admin" || user.role === "employee") && (

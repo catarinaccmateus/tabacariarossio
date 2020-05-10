@@ -17,6 +17,7 @@
 
 .store-card {
   width: 30%;
+  background-color: #f3f2f2 !important;
 }
 
 @media only screen and (max-width: 800px) {
