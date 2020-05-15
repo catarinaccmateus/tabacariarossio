@@ -28,6 +28,10 @@ export default class Private extends Component {
     this.commercialAgreement = this.commercialAgreement.bind(this);
   }
 
+componentDidMount() {
+  window.scrollTo(0, 0);
+}
+
   hideTaxAddress() {
     console.log("hey");
     let checkBox = document.getElementById("taxAddressCheck");

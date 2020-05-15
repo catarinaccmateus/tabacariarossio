@@ -18,6 +18,12 @@
 .store-card {
   width: 30%;
   background-color: #f3f2f2 !important;
+  border-color: var(--background-color) !important;
+}
+
+.store-image {
+  border-radius: 20px !important;
+  margin-top: 1em;
 }
 
 @media only screen and (max-width: 800px) {

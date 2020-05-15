@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import {getAllOrdersPerUser as getAllOrdersPerUserService} from "./../../services/orders";
+import "./MyOrders.css"
 
 export class MyOrders extends Component {
   constructor(props) {
@@ -11,6 +12,7 @@ export class MyOrders extends Component {
   }
 
   async componentDidMount() {
+    window.scrollTo(0, 0);
     const user = this.props.user;
     try {
       const orders = await getAllOrdersPerUserService(user._id);
@@ -30,20 +32,20 @@ export class MyOrders extends Component {
         <h2 className="color-bege"> As minhas encomendas</h2>
         {isThereOrders > 0 ? (
           <div> 
-          <p>Tenho {isThereOrders} encomenda/s. </p>
-          <table className="table table-striped">
+          <p className="text-center"><b>Número de encomenda/s realizada/s:</b> {isThereOrders}.</p>
+          <table className="table table-striped ">
             <thead>
-              <th>Código de encomenda</th>
-              <th>Data</th>
-              <th>Total</th>
-              <th>Estado</th>
+              <th className="align-middle text-center">Código de encomenda</th>
+              <th className="align-middle text-center">Data</th>
+              <th className="align-middle text-center">Total</th>
+              <th className="align-middle text-center">Estado</th>
             </thead>
             <tbody>
               {orders.map(order => <tr>
-                <td><Link to={`/order-confirmed/${order._id}`}>{order._id}</Link></td>
-                <td>{order.creationDate}</td>
-                <td>{order.total}</td>
-                <td>{order.status}</td>
+                <td className="align-middle text-center"><Link to={`/order-confirmed/${order._id}` } className="reduced-text-size ">{order._id.slice(0,12)} {order._id.slice(12)}</Link></td>
+                <td className="align-middle text-center">{order.creationDate.slice(0, 10)}, {order.creationDate.slice(11, 16)}</td>
+                <td className="align-middle text-center">{order.total} €</td>
+                <td className="align-middle text-center">{order.status}</td>
               </tr>)}
             </tbody>
           </table>

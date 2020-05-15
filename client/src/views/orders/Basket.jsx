@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import calculateTotalBasket from "./../../middleware/calculateTotalBasket";
 import { Link } from "react-router-dom";
 import BasketLogo from "./../../public/images/logos/shopping cart brown.png";
+import trashLogo from "./../../public/icons/trash.png";
 import "./Basket.css";
 
 export default class Basket extends Component {
@@ -40,6 +41,7 @@ export default class Basket extends Component {
   }
 
   componentDidMount() {
+    window.scrollTo(0, 0);
     const totalInBasket = calculateTotalBasket().toFixed(2);
     this.props.updateTotalInBasket(totalInBasket);
   }
@@ -64,83 +66,100 @@ export default class Basket extends Component {
       <div className="main-container m-5 text-center d-flex flex-column justify-content-center align-items-center">
         <h2 className="color-bege mb-2">Carrinho de Compras</h2>
         {areThereProductsInBasket() && (
-          <div>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Imagem</th>
-                  <th>Artigo</th>
-                  <th>Preço por unidade</th>
-                  <th>Quantidade</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {productsInBasket.map((product) => (
-                  <tr key={product._id}>
-                    <td>
-                      <img
-                        src={product.image}
-                        alt={product.model}
-                        style={{ width: "200px" }}
-                      />
-                    </td>
-                    <td>
-                      {" "}
-                      <Link to={`/store/${product._id}`}>{product.model}</Link>
-                    </td>
-                    <td>{product.price / 100} €</td>
-                    <td>
-                      <input
-                        type="number"
-                        min="1"
-                        max={product.available_quantity}
-                        value={product.order_quantity}
-                        id={product._id}
-                        onChange={this.handleInputChange}
-                      />
-                    </td>
-                    <td className="price">
-                      {this.calculateTotalProduct(product)}
-                    </td>
-                    <td>
-                      <form>
-                        <button
-                          onClick={this.handleDeleteButton.bind(
-                            this,
-                            product._id
-                          )}
-                        >
-                          Eliminar artigo
-                        </button>
-                      </form>
-                    </td>
+          <div className="w-100">
+            <div className="table-responsive-md product-list">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th className="align-middle text-center">Imagem</th>
+                    <th className="align-middle text-center">Artigo</th>
+                    <th className="align-middle text-center">Preço por unidade</th>
+                    <th className="align-middle text-center">Quantidade</th>
+                    <th className="align-middle text-center">Total</th>
                   </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td>Total</td>
-                  <td>{this.props.totalPriceInBasket} €</td>
-                </tr>
-              </tfoot>
-            </table>
-            <Link to={"/basket-confirmation"} className="btn btn-success">
+                </thead>
+                <tbody>
+                  {productsInBasket.map((product) => (
+                    <tr key={product._id}>
+                      <td>
+                        <img
+                          src={product.image}
+                          alt={product.model}
+                          className="basket-image"
+                        />
+                      </td>
+                      <td className="align-middle text-center">
+                        <Link to={`/store/${product._id}`}>
+                          {product.model}
+                        </Link>
+                      </td>
+                      <td className="align-middle text-center">{product.price / 100} €</td>
+                      <td className="text-center align-middle text-center">
+                        <input
+                          type="number"
+                          min="1"
+                          className="form-control quantity-input"
+                          max={product.available_quantity}
+                          value={product.order_quantity}
+                          id={product._id}
+                          onChange={this.handleInputChange}
+                        />
+                      </td>
+                      <td className="price align-middle text-center">
+                        {this.calculateTotalProduct(product)}
+                      </td>
+                      <td>
+                        <form>
+                          <button
+                            onClick={this.handleDeleteButton.bind(
+                              this,
+                              product._id
+                            )}
+                            className="btn"
+                          >
+                            <img
+                              src={trashLogo}
+                              alt="Remove this item"
+                              width="15px"
+                            />
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td><b>Total</b></td>
+                    <td>{this.props.totalPriceInBasket} €</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            <Link to={"/basket-confirmation"} className="standard-button m-0">
               Proceder para pagamento
             </Link>
           </div>
         )}
         {!productsInBasket.length ? (
           <div className="d-flex flex-column align-items-around my-5">
-          <h2>
-            Ups! </h2>
-            <p>O seu carrinho está vazio. <br />
+            <h2>Ups! </h2>
+            <p>
+              O seu carrinho está vazio. <br />
             </p>
-            <img src={BasketLogo} alt="shopping-cart"  className="shopping-cart img-fluid m-5"/>
-            <Link to="/store" className="standard-button m-5">Espreite a nossa loja.</Link>
+            <img
+              src={BasketLogo}
+              alt="shopping-cart"
+              className="shopping-cart img-fluid m-5"
+            />
+            <Link to="/store" className="standard-button m-5">
+              Espreite a nossa loja.
+            </Link>
           </div>
         ) : (
-          <Link to="Store">Voltar à loja</Link>
+          <Link to="Store" className="m-5">
+            Voltar à loja
+          </Link>
         )}
       </div>
     );

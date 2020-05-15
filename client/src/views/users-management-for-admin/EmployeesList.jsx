@@ -16,6 +16,7 @@ export default class EmployeesList extends Component {
   }
 
   async componentDidMount() {
+    window.scrollTo(0, 0);
     this._isMounted = true;
     this.showUsers();
   }

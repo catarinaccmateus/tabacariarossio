@@ -20,6 +20,10 @@ export default class CreateProduct extends Component {
     this.handleImageChange = this.handleImageChange.bind(this);
   }
 
+  componentDidMount(){
+    window.scrollTo(0, 0);
+  }
+
   async handleSubmission(event) {
     event.preventDefault();
     await CreateProductService(this.state)

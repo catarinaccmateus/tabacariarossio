@@ -71,7 +71,7 @@ function BasketConfirmation(props) {
                   <label htmlFor="basket-confirmation">
                     Confirmo que os dados acima mencionados estão corretos.
                   </label>
-                  <button onClick={createOrder}>
+                  <button onClick={createOrder} className="standard-button">
                     Prosseguir para pagamento
                   </button>
                 </form>

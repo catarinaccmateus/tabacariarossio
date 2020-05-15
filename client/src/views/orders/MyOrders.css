@@ -1,0 +1,13 @@
+.table-striped>tr:nth-child(odd){
+  background-color:red;
+}
+
+.reduced-text-size {
+  font-size: 0.8em;
+}
+
+@media only screen and (max-width: 800px) {
+  .table th, .table td {
+  padding: 0 !important;
+  }
+}

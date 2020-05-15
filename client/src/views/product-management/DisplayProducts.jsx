@@ -84,7 +84,7 @@ export default class DisplayProducts extends Component {
   render() {
     const products = this.state.filteredProducts.slice(0, this.state.limitTo);
     return (
-      <div className="m-3 d-flex flex-column justify-content-center align-items-center">
+      <div className="m-3 d-flex flex-column justify-content-center align-items-center" id="store-view">
         <h2 className="text-center color-bege">A nossa loja</h2>
         <input
           id="search_product"
@@ -139,7 +139,7 @@ export default class DisplayProducts extends Component {
                 <img
                   src={squarePicture(product.image[0])}
                   alt={this.state.model}
-                  className="card-img-top mx-auto m-1"
+                  className="card-img-top mx-auto store-image"
                   style={{ maxWidth: "300px" }}
                 />
                 <div className="card-body d-flex flex-column justify-content-center align-items-center">

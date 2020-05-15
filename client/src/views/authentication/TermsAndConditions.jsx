@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 
 export default class TermsAndConditions extends Component {
+  componentDidMount(){
+    window.scrollTo(0, 0);
+  }
   render() {
     return (
       <div class="main-container">

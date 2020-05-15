@@ -145,167 +145,154 @@ class App extends Component {
             loadUserInformation={this.loadUserInformation}
           />
           <div className="appBody">
-            {loaded && <Switch>
-              <RouteForAllLoggedIn
-                exact
-                redirect="/"
-                verify={this.verifyAuthentication}
-                path="/private"
-                render={(props) => (
-                  <Private
-                    {...props}
-                    user={this.state.user}
-                    loadUserInformation={this.loadUserInformation}
-                  />
-                )}
-              />
-              <RouteForAllLoggedIn
-                exact
-                redirect="/"
-                verify={this.verifyAuthentication}
-                path="/my-orders"
-                render={(props) => (
-                  <MyOrders {...props} user={this.state.user} />
-                )}
-              />
-              <RouteForAllLoggedIn
-                exact
-                redirect="/"
-                verify={this.verifyAuthentication}
-                path="/payment-method"
-                render={(props) => (
-                  <PaymentMethod
-                    {...props}
-                    user={this.state.user}
-                    productsInBasket={this.state.arrayOfProducts}
-                    totalPriceInBasket={this.state.totalPriceInBasket}
-                  />
-                )}
-              />
-              <RouteForAllLoggedIn
-                exact
-                redirect="/"
-                verify={this.verifyAuthentication}
-                path="/order-confirmed/:order_id"
-                render={(props) => (
-                  <OrderConfirmation {...props} user={this.state.user} />
-                )}
-              />
-              <RouteForAllLoggedIn
-                exact
-                redirect="/"
-                verify={this.verifyAuthentication}
-                path="/orders-overview/:order_id"
-                render={(props) => (
-                  <SingleOrderOverview {...props} user={this.state.user} />
-                )}
-              />
-              <RouteForAdminAndEmployee
-                redirect="/"
-                verify={this.verifyAuthentication}
-                path="/orders-overview"
-                render={(props) => (
-                  <OrdersOverview {...props} user={this.state.user} />
-                )}
-              />
-              <RouteForAdminAndEmployee
-                path="/create"
-                exact
-                component={CreateProduct}
-                redirect="/"
-                verify={this.verifyAuthentication}
-              />
-              <RouteForAdmin
-                path="/user-management"
-                exact
-                component={EmployeesList}
-                verify={this.verifyAuthentication}
-                redirect="/"
-              />
-              <RouteForAdminAndEmployee
-                redirect="/"
-                verify={this.verifyAuthentication}
-                path="/store/management"
-                exact
-                component={ProductManagement}
-              />
-              <Route
-                path="/store/:id"
-                exact
-                render={(props) => (
-                  <IndividualProduct
-                    {...props}
-                    user={this.state.user}
-                    addProductToBasket={this.addProductToBasket}
-                  />
-                )}
-              />
-              <Route path="/store" exact component={DisplayProducts} />
-              <Route
-                path="/terms-and-conditions"
-                exact
-                component={TermsAndConditions}
-              />
-              <Route
-                path="/basket-confirmation"
-                exact
-                render={(props) => (
-                  <BasketConfirmation
-                    {...props}
-                    user={this.state.user}
-                    productsInBasket={this.state.arrayOfProducts}
-                    totalPriceInBasket={this.state.totalPriceInBasket}
-                    loadUserInformation={this.loadUserInformation}
-                  />
-                )}
-              />
-              <Route
-                path="/basket"
-                exact
-                render={(props) => (
-                  <Basket
-                    {...props}
-                    productsInBasket={this.state.arrayOfProducts}
-                    updateTotalInBasket={this.updateTotalInBasket}
-                    totalPriceInBasket={this.state.totalPriceInBasket}
-                    updateProductsInBasket={this.updateProductsInBasket}
-                    eliminateProductFromBasket={this.eliminateProductFromBasket}
-                  />
-                )}
-              />
-              <Route
-                path="/reset/:token"
-                render={(props) => (
-                  <Reset
-                    {...props}
-                    loadUserInformation={this.loadUserInformation}
-                  />
-                )}
-              />
-              <Route path="/" component={Index} />
-              {/* CONVERTED THIS TWO ROUTES INTO A MODAL
-              <Route
-                path="/sign-in"
-                exact
-                render={(props) => (
-                  <SignIn
-                    {...props}
-                    loadUserInformation={this.loadUserInformation}
-                  />
-                )}
-              /> 
-                          <Route
-                path="/sign-up"
-                exact
-                render={(props) => (
-                  <SignUp
-                    {...props}
-                    loadUserInformation={this.loadUserInformation}
-                  />
-                )}
-              />
-              */}
-            </Switch>}
+            {loaded && (
+              <Switch>
+                <RouteForAllLoggedIn
+                  exact
+                  redirect="/"
+                  verify={this.verifyAuthentication}
+                  path="/private"
+                  render={(props) => (
+                    <Private
+                      {...props}
+                      user={this.state.user}
+                      loadUserInformation={this.loadUserInformation}
+                    />
+                  )}
+                />
+                <RouteForAllLoggedIn
+                  exact
+                  redirect="/"
+                  verify={this.verifyAuthentication}
+                  path="/my-orders"
+                  render={(props) => (
+                    <MyOrders {...props} user={this.state.user} />
+                  )}
+                />
+                <RouteForAllLoggedIn
+                  exact
+                  redirect="/"
+                  verify={this.verifyAuthentication}
+                  path="/payment-method"
+                  render={(props) => (
+                    <PaymentMethod
+                      {...props}
+                      user={this.state.user}
+                      productsInBasket={this.state.arrayOfProducts}
+                      totalPriceInBasket={this.state.totalPriceInBasket}
+                    />
+                  )}
+                />
+                <RouteForAllLoggedIn
+                  exact
+                  redirect="/"
+                  verify={this.verifyAuthentication}
+                  path="/order-confirmed/:order_id"
+                  render={(props) => (
+                    <OrderConfirmation {...props} user={this.state.user} />
+                  )}
+                />
+                <RouteForAllLoggedIn
+                  exact
+                  redirect="/"
+                  verify={this.verifyAuthentication}
+                  path="/orders-overview/:order_id"
+                  render={(props) => (
+                    <SingleOrderOverview {...props} user={this.state.user} />
+                  )}
+                />
+                <RouteForAdminAndEmployee
+                  redirect="/"
+                  verify={this.verifyAuthentication}
+                  path="/orders-overview"
+                  render={(props) => (
+                    <OrdersOverview {...props} user={this.state.user} />
+                  )}
+                />
+                <RouteForAdminAndEmployee
+                  path="/create"
+                  exact
+                  component={CreateProduct}
+                  redirect="/"
+                  verify={this.verifyAuthentication}
+                />
+                <RouteForAdmin
+                  path="/user-management"
+                  exact
+                  component={EmployeesList}
+                  verify={this.verifyAuthentication}
+                  redirect="/"
+                />
+                <RouteForAdminAndEmployee
+                  redirect="/"
+                  verify={this.verifyAuthentication}
+                  path="/store/management"
+                  exact
+                  component={ProductManagement}
+                />
+                <Route
+                  path="/store/:id"
+                  exact
+                  render={(props) => (
+                    <IndividualProduct
+                      {...props}
+                      user={this.state.user}
+                      addProductToBasket={this.addProductToBasket}
+                    />
+                  )}
+                />
+                <Route
+                  path="/store"
+                  exact
+                  render={(props) => <DisplayProducts {...props} />}
+                />
+                <Route
+                  path="/terms-and-conditions"
+                  exact
+                  component={TermsAndConditions}
+                />
+                <Route
+                  path="/basket-confirmation"
+                  exact
+                  render={(props) => (
+                    <BasketConfirmation
+                      {...props}
+                      user={this.state.user}
+                      productsInBasket={this.state.arrayOfProducts}
+                      totalPriceInBasket={this.state.totalPriceInBasket}
+                      loadUserInformation={this.loadUserInformation}
+                    />
+                  )}
+                />
+                <Route
+                  path="/basket"
+                  exact
+                  render={(props) => (
+                    <Basket
+                      {...props}
+                      productsInBasket={this.state.arrayOfProducts}
+                      updateTotalInBasket={this.updateTotalInBasket}
+                      totalPriceInBasket={this.state.totalPriceInBasket}
+                      updateProductsInBasket={this.updateProductsInBasket}
+                      eliminateProductFromBasket={
+                        this.eliminateProductFromBasket
+                      }
+                    />
+                  )}
+                />
+                <Route
+                  path="/reset/:token"
+                  render={(props) => (
+                    <Reset
+                      {...props}
+                      loadUserInformation={this.loadUserInformation}
+                    />
+                  )}
+                />
+                <Route path="/" component={Index} />
+              </Switch>
+            )}
+            
           </div>
           <Footer />
         </BrowserRouter>

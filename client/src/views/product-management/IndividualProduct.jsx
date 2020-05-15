@@ -28,6 +28,7 @@ export class IndividualProduct extends Component {
   }
 
   async componentDidMount() {
+    window.scrollTo(0, 0);
     let productId = this.props.match.params.id;
     await ProductInfoService(productId)
       .then((product) => {
