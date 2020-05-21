@@ -4,6 +4,7 @@ import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import BootstrapTable from "react-bootstrap-table-next";
 import "react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css";
 import filterFactory, { textFilter } from "react-bootstrap-table2-filter";
+import "./OrdersOverview.css";
 
 export class OrdersOverview extends Component {
   _isMounted = false;
@@ -21,10 +22,11 @@ export class OrdersOverview extends Component {
     try {
       const orders = await getAllOrdersService();
       if (this._isMounted) {
-      this.setState({
-        orders: orders,
-        err: false,
-      });}
+        this.setState({
+          orders: orders,
+          err: false,
+        });
+      }
     } catch (err) {
       console.log(err);
       this.setState({
@@ -49,12 +51,18 @@ export class OrdersOverview extends Component {
             this.props.history.push(`/orders-overview/${row._id}`);
           },
         },
+        formatter: (cell) => {
+          return (cell.slice(0,cell.length/2) + " " + cell.slice(cell.length/2))
+         }
       },
       {
         dataField: "creationDate",
         text: "Data",
         sort: true,
         filter: textFilter(),
+        formatter: (cell) => {
+         return (cell.slice(0,10) + " " + cell.slice(11,16))
+        }
       },
       {
         dataField: "user_id.name",
@@ -88,8 +96,8 @@ export class OrdersOverview extends Component {
       },
     ];
     return (
-      <div className="main-container">
-        <h2>Gestão de encomendas</h2>
+      <div className="main-container m-1">
+        <h2 className="color-bege">Gestão de encomendas</h2>
         {orders.length > 0 ? (
           <div>
             <p>Tem {orders.length} pedidos de encomenda.</p>
@@ -98,6 +106,13 @@ export class OrdersOverview extends Component {
               data={orders}
               columns={columns}
               filter={filterFactory()}
+              sort={{ dataField: "creationDate", order: "desc" }}
+              hover
+              striped
+              bordered={false}
+              wrapperClasses="table-responsive"
+              rowClasses="text-center"
+              headerClasses="text-center color-bege"
             />
           </div>
         ) : (

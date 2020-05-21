@@ -33,24 +33,18 @@ function BasketConfirmation(props) {
   };
 
   return (
-    <div className="main-container m-5 d-flex flex-column justify-content-center align-items-center">
+    <div className="main-container m-5 ">
       {user && (
-        <div>
-          <h1 className="color-bege mb-1">Carrinho de compras</h1>
+        <div className="d-flex flex-column justify-content-center align-items-center w-100">
+          <h1 className="color-bege mb-2">Carrinho de compras</h1>
           {areItemsInBasket() ? (
-            <div>
-              <ul>
-                <h4>Lista de artigos no carrinho</h4>
-                {props.productsInBasket.map((product) => (
-                  <li key={product._id}>
-                    {product.model}, {product.price}, {product.order_quantity}
-                  </li>
-                ))}
-              </ul>
-              <h4>Total da compra: {props.totalPriceInBasket}</h4>
-              <div>
-                <h4>Os seus dados</h4>
-                <div>Nome: {user.name}</div>
+            <div className="w-100 d-flex flex-column align-items-center justify-content-center">
+            <div className="confirm-basket-data">
+              <div className="border-bege validation-item">
+                <h4 className="color-dark mb-2">Os seus dados</h4>
+                <div>
+                  Nome: {user.name} {user.surname}
+                </div>
                 <div>Contacto telefónico: {user.phoneNumber}</div>
                 <div>E-mail: {user.email}</div>
                 <div>
@@ -66,19 +60,32 @@ function BasketConfirmation(props) {
                 <div>
                   <Link to="/private">Atualizar dados</Link>
                 </div>
-                <form>
-                  <input type="checkbox" name="basket-confirmation" required />
-                  <label htmlFor="basket-confirmation">
-                    Confirmo que os dados acima mencionados estão corretos.
-                  </label>
-                  <button onClick={createOrder} className="standard-button">
-                    Prosseguir para pagamento
-                  </button>
-                </form>
               </div>
+              <div className="border-bege validation-item">
+                <h4 className="color-dark">Lista de artigos no carrinho</h4>
+                {props.productsInBasket.map((product) => (
+                  <div key={product._id}>
+                    {product.model} - {product.price / 100} €/unidade -{" "}
+                    {product.order_quantity} unidade/s
+                  </div>
+                ))}
+              </div>
+              </div>
+              <h2 className="w-100 text-right">
+                Total da compra: <br /> {props.totalPriceInBasket} €
+              </h2>
+              <form onSubmit={createOrder} className="d-flex flex-column align-items-center justify-content-center">
+                <label htmlFor="basket-confirmation">
+                  <input type="checkbox" name="basket-confirmation" required />
+                  Confirmo que os dados acima mencionados estão corretos.
+                </label>
+                <button className="standard-button">
+                  Prosseguir para pagamento
+                </button>
+              </form>
             </div>
           ) : (
-            <div className="d-flex flex-column align-items-around my-5">
+            <div className="d-flex flex-column justify-content-center align-items-center my-5">
               <h2>Ups! </h2>
               <p>
                 O seu carrinho está vazio. <br />
@@ -88,7 +95,7 @@ function BasketConfirmation(props) {
                 alt="shopping-cart"
                 className="shopping-cart img-fluid m-5"
               />
-              <Link to="/store" className="standard-button m-5">
+              <Link to="/store" className="standard-button m-5 text-center">
                 Espreite a nossa loja.
               </Link>
             </div>
@@ -101,10 +108,9 @@ function BasketConfirmation(props) {
           <h1 className="m-4 text-center color-bege ">Quase lá!</h1>
 
           <h2 className="text-center color-dark">
-            Por favor, <Link onClick={handleSignInModalOpen}>inicie sessão</Link> ou{" "}
-            <Link onClick={handleSignUpModalOpen}>
-              crie uma conta para
-            </Link>{" "}
+            Por favor,{" "}
+            <Link onClick={handleSignInModalOpen}>inicie sessão</Link> ou{" "}
+            <Link onClick={handleSignUpModalOpen}>crie uma conta para</Link>{" "}
             continuar com a sua compra.
           </h2>
         </div>

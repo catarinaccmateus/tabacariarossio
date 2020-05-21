@@ -46,23 +46,18 @@ export default class EmployeesList extends Component {
   render() {
     const users = this.state.users;
     return (
-      <div className="main-container center-container d-flex flex-column">
-        <Popup
-          trigger={<button> Adicionar novo empregado</button>}
-          modal
-          closeOnDocumentClick
-        >
-          <AddEmployee updateUsers={this.showUsers} />
-        </Popup>
-        <div>
-          <h3>Lista de empregados</h3>
+      <div className="main-container d-flex flex-column m-5">
+       
+          <h3 className="color-bege mb-3">Lista de atuais empregados</h3>
+          <div className="d-flex flex-column align-items-center">
           {users.length > 0 ? (
-            <ul>
+            <ul className="w-100">
               {users.map((user) => (
-                <li key={user._id}>
-                  {user.name} {user.surname} {user.email}{" "}
+                <li key={user._id} className="m-2">
+                  {user.name} {user.surname} {user.email}
+                  <br/>
                   <button
-                    className="btn"
+                    className="btn btn-danger m-1"
                     type="button"
                     onClick={(e) => this.deleteUser(e, user._id)}
                   >
@@ -74,6 +69,14 @@ export default class EmployeesList extends Component {
           ) : (
             <div>Ainda não tem usuários</div>
           )}
+          <Popup
+          trigger={<button className="standard-button w-50"> Adicionar novo empregado</button>}
+          modal
+          closeOnDocumentClick
+          contentStyle={{borderRadius: "15px", width: "80%"}}
+        >
+          <AddEmployee updateUsers={this.showUsers} />
+        </Popup>
         </div>
       </div>
     );

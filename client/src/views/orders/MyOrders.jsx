@@ -28,24 +28,24 @@ export class MyOrders extends Component {
     const orders = this.state.orders;
     const isThereOrders = orders.length;
     return (
-      <div className="main-container m-3">
+      <div className="main-container margin-responsive">
         <h2 className="color-bege"> As minhas encomendas</h2>
         {isThereOrders > 0 ? (
           <div> 
-          <p className="text-center"><b>Número de encomenda/s realizada/s:</b> {isThereOrders}.</p>
+          <p className="text-center"><b>Número de encomenda/s realizada/s:</b> {isThereOrders}</p>
           <table className="table table-striped ">
             <thead>
-              <th className="align-middle text-center">Código de encomenda</th>
-              <th className="align-middle text-center">Data</th>
-              <th className="align-middle text-center">Total</th>
-              <th className="align-middle text-center">Estado</th>
+              <th className="align-middle text-center color-bege">Código de encomenda</th>
+              <th className="align-middle text-center color-bege">Data</th>
+              <th className="align-middle text-center color-bege">Total</th>
+              <th className="align-middle text-center color-bege">Estado</th>
             </thead>
             <tbody>
               {orders.map(order => <tr>
-                <td className="align-middle text-center"><Link to={`/order-confirmed/${order._id}` } className="reduced-text-size ">{order._id.slice(0,12)} {order._id.slice(12)}</Link></td>
+                <td className="align-middle text-center"><Link to={`/order-confirmed/${order._id}` } className="reduced-text-size color-dark font-weight-bold">{order._id.slice(0,12)} {order._id.slice(12)}</Link></td>
                 <td className="align-middle text-center">{order.creationDate.slice(0, 10)}, {order.creationDate.slice(11, 16)}</td>
                 <td className="align-middle text-center">{order.total} €</td>
-                <td className="align-middle text-center">{order.status}</td>
+                <td className="align-middle text-center text-capitalize">{order.status}</td>
               </tr>)}
             </tbody>
           </table>

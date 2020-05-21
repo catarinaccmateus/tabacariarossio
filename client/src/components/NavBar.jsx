@@ -69,10 +69,7 @@ class NavBar extends Component {
           className="justify-content-end"
         >
           <Nav className="mr-auto">
-            <Nav.Link as={Link} to={"/store"} className="nav-link text-light">
-             Visite a nossa Loja
-            </Nav.Link>
-
+        
             {user && (user.role === "admin" || user.role === "employee") && (
               <Nav.Link
                 as={Link}
@@ -128,6 +125,9 @@ class NavBar extends Component {
                 Sign-in
               </Nav.Link>
             )}
+            <Nav.Link as={Link} to={"/store"} className="nav-link text-light">
+             Loja
+            </Nav.Link>
             <Nav.Link as={Link} to={"/basket"} className="nav-link text-light">
               <img
                 src={ShoppingCart}

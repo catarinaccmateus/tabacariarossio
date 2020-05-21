@@ -30,7 +30,7 @@ code {
 }
 
 .standard-button:hover {
-  background-color: var(--headers-color); 
+  background-color: var(--headers-color);
   color: white;
   border: 3px solid var(--background-color);
   padding: 0.7em;
@@ -48,7 +48,6 @@ code {
   align-items: center;
   margin: 0 auto;
 }
-
 
 .background-color-dark {
   background-color: var(--background-color);
@@ -74,8 +73,22 @@ code {
   color: var(--light-background);
 }
 
+.border-bege {
+  border: 3px solid var(--headers-color);
+  border-radius: 15px;
+}
+
+.border-dark {
+  border: 3px solid var(--background-color);
+  border-radius: 15px;
+}
+
 @media only screen and (min-width: 801px) {
-  .decrease-button-size-large-screen{
+  .decrease-button-size-large-screen {
     width: 10em;
+  }
+  .margin-responsive-size {
+    margin-right: 1em;
+    margin-left: 1em;
   }
 }

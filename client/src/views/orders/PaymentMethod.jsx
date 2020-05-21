@@ -1,5 +1,6 @@
 import React, { Component, createContext } from "react";
 import { createOrder as createOrderService } from "./../../services/orders";
+import "./PaymentMethod.css";
 
 export default class PaymentMethod extends Component {
   constructor(props) {
@@ -26,11 +27,13 @@ export default class PaymentMethod extends Component {
               payment_option: paymentOptionSelected,
             });
             if (response.errors) {
+              console.log('error');
               console.log(response.errors);
               alert(
                 "Ocorreu um erro no servidor. Por favor, entre em contacto connosco."
               );
             } else {
+              console.log("else");
               const orderId = response._id;
               this.props.history.push(`/order-confirmed/${orderId}`);
             }
@@ -51,12 +54,12 @@ export default class PaymentMethod extends Component {
 
   render() {
     return (
-      <div className="center-container main-container ">
+      <div className="main-container my-5 margin-responsive-size p-3 d-flex justify-content-center align-items-center border-bege">
         <form
           onSubmit={this.handleSubmission}
           className="d-flex flex-column align-items-center"
         >
-          <h3>Seleccione a forma de pagamento.</h3>
+          <h3 className="color-bege">Seleccione a forma de pagamento.</h3>
           <label htmlFor="bank_transfer">Transferência bancária</label>
           <input
             type="radio"
@@ -74,11 +77,11 @@ export default class PaymentMethod extends Component {
           />
           <label htmlFor="mbway">Mbway</label>
           <input type="radio" id="mbway" name="payment_method" value="mbway" />
-          <button className="btn btn-success m-3">Realizar pagamento</button>
+          <button className="standard-button">Realizar pagamento</button>
           <span>
             De momento só estamos a aceitar pagamentos por transferência
-            bancária. O comprovativo de pagamento deverá ser enviado por e-mail
-            com o assunto nr de encomenda .
+            bancária. <br /> O comprovativo de pagamento deverá ser enviado por
+            e-mail com o assunto nr de encomenda .
           </span>
         </form>
       </div>

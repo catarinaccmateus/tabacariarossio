@@ -2,9 +2,17 @@
   width: 200px;
 }
 
+.basket-container {
+  margin: 3em;
+}
+
 .basket-image {
   width: 200px;
   border-radius: 15px;
+}
+
+.width-like-image {
+  width: 200px;
 }
 
 .quantity-input {
@@ -13,10 +21,51 @@
 
 .product-list {
   margin-bottom: 3em;
+
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.product-in-basket {
+  border: 3px solid var(--headers-color);
+  margin-bottom: 1em;
+  border-radius: 15px;
+  width: 100%;
+  padding: 1em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.confirm-basket-data {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.validation-item {
+  width: 50%;
 }
 
 @media only screen and (max-width: 800px) {
   .basket-image {
     width: 100px;
+  }
+  .basket-container {
+    margin: 1em;
+  }
+  .product-in-basket {
+    flex-direction: column;
+  }
+  .confirm-basket-data {
+    flex-direction: column;
+  }
+  .validation-item {
+    width: 100%;
   }
 }

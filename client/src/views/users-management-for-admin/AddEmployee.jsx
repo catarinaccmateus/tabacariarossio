@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { signUp as signUpService } from "../../services/authentication";
-import { Redirect } from "react-router-dom";
 
 export class AddEmployee extends Component {
   constructor(props) {
@@ -86,61 +85,66 @@ export class AddEmployee extends Component {
     const { passwordsDontMatch } = this.state;
     return (
       <div className="">
-        <div className="">
-          <form onSubmit={this.handleSubmissionEvent} className="form w-100">
-            <h3>Adicionar empregado</h3>
-            <label htmlFor="input-name">Name</label>
-            <input
+        <div className="add-user-modal">
+          <form onSubmit={this.handleSubmissionEvent} className="form w-100 d-flex flex-column">
+            <h3 className="color-bege">Adicionar empregado</h3>
+            <label htmlFor="input-name">Nome <input
               type="text"
               id="input-name"
               name="name"
               placeholder="Your Name"
               onChange={this.handleInputChange}
               value={this.state.name}
-            />
-            <label htmlFor="input-surname">Surname</label>
-            <input
+              className="form-control"
+            /></label>
+           
+            <label htmlFor="input-surname">Apelido <input
+            className="form-control"
               type="text"
               id="input-surname"
               name="surname"
               placeholder="Your Surname"
               onChange={this.handleInputChange}
               value={this.state.surname}
-            />
-            <label htmlFor="input-email">Email</label>
-            <input
+            /></label>
+           
+            <label htmlFor="input-email">Email <input
+            className="form-control"
               type="email"
               id="input-email"
               name="email"
               placeholder="Your Email"
               onChange={this.handleInputChange}
               value={this.state.email}
-            />
+            /></label>
+           
             {this.state.duplicated_email && (
               <span className="text-danger">
                 Este e-mail já se encontra registado.
               </span>
             )}
-            <label htmlFor="input-password">Password</label>
-            <input
+            <label htmlFor="input-password">Password  <input
+            className="form-control"
               type="password"
               name="password"
               id="input-password"
               placeholder="Escreva uma password"
               onChange={this.handleInputChange}
               value={this.state.password}
-            />
-            <label htmlFor="confirmPassword">Password</label>
-            <input
+            /></label>
+          
+            <label htmlFor="confirmPassword">Password <input
+            className="form-control"
               type="password"
               name="confirmPassword"
               id="confirmPassword"
               placeholder="Repita a password"
               onChange={this.handleInputChange}
               value={this.state.confirmPassword}
-            />
+            /></label>
+           
             {passwordsDontMatch && <span>As passwords têm que coincidir.</span>}
-            <button>Adicionar</button>
+            <button className="standard-button">Adicionar</button>
           </form>
         </div>
       </div>

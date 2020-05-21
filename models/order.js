@@ -27,7 +27,7 @@ const schema = new mongoose.Schema({
   invoice_files: Array,
   comments: {
     type: Array,
-    default: [{text: "", date: "", user: ""}]
+    default: [{text: "Criação da encomenda", user: "TABACARIA-ROSSIO", creationDate: new Date() }]
   },
   creationDate: { type: Date, default: Date.now },
 });

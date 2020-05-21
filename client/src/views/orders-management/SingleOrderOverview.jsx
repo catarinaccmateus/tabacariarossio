@@ -37,7 +37,7 @@ export class SingleOrderOverview extends Component {
         user: response.order.user_id,
       });
       if (response.order.user_id) {
-      response.order.user_id = response.order.user_id._id;
+        response.order.user_id = response.order.user_id._id;
       }
       this.setState({
         order: response.order,
@@ -53,7 +53,7 @@ export class SingleOrderOverview extends Component {
 
   async handleOrderUpdate(event) {
     event.preventDefault();
-    const { new_status} = this.state;
+    const { new_status } = this.state;
     const orderId = this.props.match.params.order_id;
     try {
       await updateOrderService({
@@ -80,10 +80,12 @@ export class SingleOrderOverview extends Component {
     const orderId = this.props.match.params.order_id;
     const comment = this.state.comment;
     const user = this.props.user;
+    console.log(new Date());
     try {
       const response = await addCommentToOrderService({
         text: comment,
         order_id: orderId,
+        creationDate: new Date(),
         user: user.email,
       });
       if (response === "Comment added") {
@@ -139,72 +141,79 @@ export class SingleOrderOverview extends Component {
   render() {
     const { order, user, err, errAddingComment } = this.state;
     return (
-      <div>
-        <h3>Gestão de encomenda</h3>
+      <div className="m-3">
+        <h3 className="color-bege">Gestão de encomenda</h3>
         {order && (
-          <div>
+          <div className="m-2">
             <h4>Detalhes do cliente</h4>
-            {user ? <div>
-            <p>
-              Nome do cliente:
-              {user.name} {user.surname}
-            </p>
-            <div>Contacto telefónico: {user.phoneNumber}</div>
-            <div>E-mail: {user.email}</div>
-            <p>
-              Morada de entrega:
-              {user.address.line1} {user.address.line2} {user.address.city}
-              {user.address.zipcode} {user.address.country}
-            </p>
-            <p>
-              Morada de faturação: {user.taxAddress.line1}
-              {user.taxAddress.line2} {user.taxAddress.city}
-              {user.taxAddress.zipcode} {user.taxAddress.country}
-            </p>
-            </div> : <div>O utilizador eliminou a sua conta e os seus dados foram eliminados. <br/> Se for necessário, consulte no e-mail da loja o e-mail com o pedido de encomenda.</div>}
+            {user ? (
+              <div className="border-bege">
+                <p>
+                  Nome do cliente:
+                  {user.name} {user.surname}
+                </p>
+                <div>Contacto telefónico: {user.phoneNumber}</div>
+                <div>E-mail: {user.email}</div>
+                <p>
+                  Morada de entrega:
+                  {user.address.line1} {user.address.line2} {user.address.city}
+                  {user.address.zipcode} {user.address.country}
+                </p>
+                <p>
+                  Morada de faturação: {user.taxAddress.line1}
+                  {user.taxAddress.line2} {user.taxAddress.city}
+                  {user.taxAddress.zipcode} {user.taxAddress.country}
+                </p>
+              </div>
+            ) : (
+              <div className="border-bege">
+                O utilizador eliminou a sua conta e os seus dados foram
+                eliminados. <br /> Se for necessário, consulte no e-mail da loja
+                o e-mail com o pedido de encomenda.
+              </div>
+            )}
             <h4>Detalhes da encomenda</h4>
-            <p>Data do pedido de encomenda: {order.creationDate}</p>
-            <ul>
-              {order.products_basket.map((product) => (
-                <li key={product._id}>
-                  modelo: {product.model}, marca: {product.brand}, preço por
-                  unidade: {product.price / 100}, quantidade:
-                  {product.order_quantity}
-                </li>
-              ))}
-            </ul>
-            <p>Total: {order.total}</p>
-            <div>
-              Estado: {order.status}
-              <br />
+            <div className="border-bege">
+              <p>
+                Data do pedido de encomenda: {order.creationDate.slice(0, 10)},{" "}
+                {order.creationDate.slice(11, 16)}
+              </p>
+              <ul>
+                {order.products_basket.map((product) => (
+                  <li key={product._id}>
+                    modelo: {product.model}, marca: {product.brand}, preço por
+                    unidade: {product.price / 100}, quantidade:
+                    {product.order_quantity}
+                  </li>
+                ))}
+              </ul>
+              <p>Total: {order.total}</p>
+              <div>Estado: {order.status}</div>
               <form id="status" onSubmit={this.handleOrderUpdate}>
-                <select name="new_status" onChange={this.handleInputChange}>
+                <select
+                  name="new_status"
+                  onChange={this.handleInputChange}
+                  className="form-control"
+                >
                   <option value="ordered">Encomendada</option>
                   <option value="paid">Paga</option>
                   <option value="shipped">Enviada</option>
                   <option value="canceled">Cancelada</option>
                 </select>
-                <button>Atualizar</button>
+                <button className="standard-button">Atualizar</button>
               </form>
-            </div>
-            <div>
-              Fatura: {order.invoice}
-              <br />
-              <form onSubmit={this.handleUpload}>
-                <h4>Adicionar Fatura</h4>
-                <span>*Cada fatura deve ter um título único.</span>
-                <input type="file" onChange={this.handleSelectedFile} />
-                <button>Adicionar</button>
-              </form>
+              Estado de faturação: {order.invoice}.
               {order.invoice_files.length > 0 ? (
                 <div>
+                  Esta venda tem {order.invoice_files.length} fatura/s
+                  associada/s.
                   {order.invoice_files.map((file) => (
                     <div key={order._id}>
-                      Esta encomenda tem fatura.
                       <a href={file.fileLink} target="_blank">
                         Link para a fatura.
                       </a>
                       <button
+                        className="standard-button"
                         type="button"
                         onClick={() => this.deteleFile(file.s3_key)}
                       >
@@ -217,20 +226,34 @@ export class SingleOrderOverview extends Component {
                 <div>Esta encomenda ainda não tem uma fatura associada.</div>
               )}
             </div>
-            <div>
-              <h5>Observações</h5>
+            <h4>Adicionar Fatura</h4>
+
+            <div className="border-bege">
+              <form onSubmit={this.handleUpload}>
+                <span>*Cada fatura deve ter um título único.</span>
+                <input
+                  type="file"
+                  onChange={this.handleSelectedFile}
+                  className="form-control"
+                />
+                <button className="standard-button">Adicionar</button>
+              </form>
+            </div>
+            <h4>Observações</h4>
+            <div className="border-bege">
               <form onSubmit={this.addCommentToOrder}>
                 <label htmlFor="comments">
                   Adicione comentários relativos a esta encomenda.
                 </label>
                 <input
+                  className="form-control"
                   type="text"
                   id="comment"
                   name="comment"
                   onChange={this.handleInputChange}
                   value={this.state.comment}
                 />
-                <button>Adicionar</button>
+                <button className="standard-button">Adicionar</button>
               </form>
 
               {errAddingComment && (
@@ -241,11 +264,16 @@ export class SingleOrderOverview extends Component {
               )}
               {order.comments.length > 0 ? (
                 <div>
-                  {order.comments.map((comment, index) => (
-                    <div key={index}>
-                      <p>{comment.text}</p>
-                      <span>{comment.creationDate}</span>
-                      <span>{comment.user}</span>
+                  {order.comments.sort((a, b) => a.creationDate-b.creationDate).map((comment, index) => (
+                    <div key={index} className="border-dark m-1 p-1">
+                      <div className="d-flex flex-row flex-wrap justify-content-between mb-3">
+                        <span>{comment.user}</span>
+                        <span>
+                          {comment.creationDate.slice(0, 10)},{" "}
+                          {comment.creationDate.slice(11, 16)}
+                        </span>
+                      </div>
+                      <p className="text-center">{comment.text}</p>
                     </div>
                   ))}
                 </div>
