@@ -133,7 +133,7 @@ export default class DisplayProducts extends Component {
           {this.state.filteredProducts &&
             products.map((product) => (
               <div
-                className="card text-center m-2 store-card"
+                className="card text-center m-2 store-card card-background"
                 key={product._id}
               >
                 <img
@@ -157,7 +157,7 @@ export default class DisplayProducts extends Component {
                     </div>
                   )}
                 </div>
-                <div className="card-footer background-color-light">
+                <div className="card-footer card-footer-background">
                   <Link className="text-light" to={`/store/${product._id}`}>
                     Mais informações
                   </Link>

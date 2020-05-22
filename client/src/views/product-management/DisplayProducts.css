@@ -26,6 +26,14 @@
   margin-top: 1em;
 }
 
+.card-background {
+  background-color: #f5f3ef !important;
+}
+
+.card-footer-background {
+  background-color: #544545 !important;
+}
+
 @media only screen and (max-width: 800px) {
   .store-filters {
     margin: 0.5em;
